@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 文档 / Documentation
+    url: https://www.niu6ai.com
+    about: 先看一下官网与文档,可能已有解答 / Browse the website and docs first; the answer may already be there.
+  - name: 📜 更新日志 / Changelog
+    url: https://www.niu6ai.com/changelog
+    about: 查看最新版本与已修复的问题 / Check the latest releases and fixed issues.
+  - name: 🔒 安全问题 / Security
+    url: https://www.niu6ai.com
+    about: 安全相关问题请通过官网联系方式邮件提交,勿公开 issue / For security issues, email via the contact on the website — do not file publicly.

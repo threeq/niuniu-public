@@ -1,0 +1,40 @@
+name: 💡 Feature Request (English)
+description: Propose a new feature or an improvement to an existing one
+title: "[Feature] "
+labels: ["enhancement", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Welcome. Lead with the problem you want to solve — much more useful
+        than jumping straight to a solution.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: What's the pain point? When does it come up?
+      placeholder: |
+        Switching workspaces always requires picking the directory by hand —
+        too much repetition ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution (optional)
+      description: A concrete design or a reference product, if you have one. If not, we'll figure it out.
+      placeholder: |
+        Add a "recent workspaces" dropdown to the top-right (limit 5) ...
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered (optional)
+      description: Other approaches you've tried, or how other products handle it.
+      placeholder: I use Alfred shortcuts today, but that hack doesn't sync across devices.
+    validations:
+      required: false

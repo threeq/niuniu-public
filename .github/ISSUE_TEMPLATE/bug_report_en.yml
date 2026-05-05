@@ -1,0 +1,67 @@
+name: 🐛 Bug Report (English)
+description: Crashes, errors, or unexpected behavior in the desktop app
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug. Filling out as much as possible helps us
+        diagnose faster. Drop screenshots or logs straight into the form.
+
+  - type: input
+    id: version
+    attributes:
+      label: Desktop app version
+      description: Find it under "Settings → About", e.g. v1.2.3
+      placeholder: v1.2.3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: Describe what actually occurred and what you expected to happen.
+      placeholder: |
+        Actual: opening a Workspace crashes the app, log says ...
+        Expected: workspace opens normally
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Step-by-step. The more concrete, the better.
+      placeholder: |
+        1. Open niuniu
+        2. Create a new workspace
+        3. Click "Run agent"
+        4. See ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots (optional)
+      description: Paste error logs or drop in screenshots.
+      placeholder: Paste logs here (rendered as a code block automatically)
+      render: shell
+    validations:
+      required: false

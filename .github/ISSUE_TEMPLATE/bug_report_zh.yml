@@ -1,0 +1,67 @@
+name: 🐛 Bug 反馈(中文)
+description: 桌面 app 出现的崩溃、错误、行为异常等
+title: "[Bug] "
+labels: ["bug", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交 bug。请尽量完整填写下面的信息,这能帮我们更快定位问题。
+        如有截图或日志,直接拖到表单里即可。
+
+  - type: input
+    id: version
+    attributes:
+      label: 桌面 app 版本号
+      description: 在「设置 → 关于」里能看到,例如 v1.2.3
+      placeholder: v1.2.3
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 操作系统
+      options:
+        - Windows 11
+        - Windows 10
+        - macOS (Apple Silicon)
+        - macOS (Intel)
+        - Linux
+        - 其他
+    validations:
+      required: true
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么
+      description: 描述实际发生的现象,以及你期望应该怎样
+      placeholder: |
+        实际:打开 Workspace 就崩溃,日志显示 ...
+        期望:正常进入 Workspace
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 一步一步写,越具体越好
+      placeholder: |
+        1. 打开 niuniu
+        2. 创建一个新 workspace
+        3. 点击「Run agent」
+        4. 看到 ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: 日志 / 截图(可选)
+      description: 粘贴报错日志或拖入截图
+      placeholder: 把日志粘贴到这里(会自动按代码块格式显示)
+      render: shell
+    validations:
+      required: false
