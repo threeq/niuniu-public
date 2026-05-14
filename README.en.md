@@ -1,8 +1,8 @@
-# niuniu
+# Niuniu
 
 > [中文](./README.md) | English
 
-The public-facing repository for **niuniu** — used to publish desktop releases,
+The public-facing repository for **Niuniu** — used to publish desktop releases,
 track issues, and collect community feedback. The project source lives in a
 private repository; **no code lives here**.
 
@@ -14,10 +14,12 @@ private repository; **no code lives here**.
 - 🐛 File a bug: [New Bug Report](https://github.com/threeq/niuniu-public/issues/new?template=bug_report_en.yml)
 - 💡 Feature request: [New Feature Request](https://github.com/threeq/niuniu-public/issues/new?template=feature_request_en.yml)
 
-## About niuniu
+## About Niuniu
 
-niuniu is a local-first workstation for driving many parallel Claude Code
-sessions across multiple projects and repositories. See the
+Niuniu is a **goal-driven**, local-first AI development workstation: write the
+work down as issues, and a fleet of Claude Code agents plan, execute, and
+verify them in parallel — across projects and repositories. They only come
+back to you when they're actually blocked. See the
 [official site](https://www.niu6ai.com/en) for the full overview.
 
 ## Notes on filing issues
