@@ -1,0 +1,63 @@
+---
+title: 常见问题与故障排查
+description: 安装、启动、agent 对话过程中的常见问题。
+group: faq
+order: 1
+---
+
+## 端口被占用怎么办
+
+牛牛默认监听 `3000`。可以通过 `~/.niuniu/config.yaml` 修改：
+
+```yaml
+server:
+  host: 127.0.0.1
+  port: 3001
+```
+
+或环境变量 `NIUNIU_SERVER_PORT=3001`。
+
+## SQLite 锁错误
+
+如果看到 `database is locked`，通常是上次进程没干净退出。
+
+- 检查是否还有 `niuniu` / `niuniu-server` 进程：`ps aux | grep niuniu`，杀掉。
+- 删除 lock 文件：`rm ~/.niuniu/niuniu.db-shm ~/.niuniu/niuniu.db-wal`（数据本身在 `niuniu.db`，不要删）。
+- 如果同时跑 ≥ 3 个 workspace，建议切到 PostgreSQL（见 [Self-Hosted 安装](/docs/install/self-hosted)）。
+
+## `claude` 命令找不到
+
+牛牛通过 `claude` CLI 与 Anthropic 通信，需要先安装 [Claude CLI](https://docs.anthropic.com/en/docs/claude-code)。
+
+```bash
+# 验证安装
+claude --version
+```
+
+如果命令不在 `PATH`，在 `~/.niuniu/config.yaml` 显式指定：
+
+```yaml
+agent:
+  claude_cli_path: /Users/me/.local/bin/claude
+```
+
+## 关闭认证
+
+开发自用场景可以关闭认证，编辑 `~/.niuniu/config.yaml`：
+
+```yaml
+auth:
+  enabled: false
+```
+
+重启牛牛即可。注意：**不要在生产环境关认证**。
+
+## 数据文件位置
+
+- 配置：`~/.niuniu/config.yaml`
+- SQLite 数据库：`~/.niuniu/niuniu.db`
+- 多租户子目录：`~/.niuniu/{users,orgs}/<id>/{workspaces,repositories}/`
+
+## 还没找到答案？
+
+提一个 [GitHub issue](https://github.com/threeq/niuniu-public/issues) 或邮件联系我们。

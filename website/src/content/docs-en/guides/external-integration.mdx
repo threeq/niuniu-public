@@ -1,0 +1,124 @@
+---
+title: "External system integration"
+description: "Inside a workspace, the agent queries GitHub / Jira / TAPD via MCP; the AI filters, analyzes, and summarizes, then writes the relevant work items onto the Kanban."
+group: guides
+order: 4
+---
+
+Niuniu doesn't give you a "browse external issues + checkbox + import" button — that would dump filtering, mapping, deduping, and decision-making into product UI, which is both hard to express and hard to customize.
+
+The path we take instead: **the agent inside a workspace queries the external system over MCP, the AI does filtering / analysis / dedup / summarization, and only the data that actually matters lands on the Kanban**.
+
+Direct upside of this model:
+
+- Integration rules are written in natural language in your prompt — no need to wait for the product to ship dropdowns for every combination
+- Any query you can describe can run — "P0 bugs closed last week", "issues labeled `area/billing` that mention me", "PRs whose reviewer hasn't replied in 30 days"
+- Every intermediate step is visible — the agent surfaces every query and decision, so you can audit
+
+The flow is three steps: configure the available resources (credentials + scope), let the agent query via MCP from inside a workspace, then have the agent integrate results onto the Kanban.
+
+## Step 1: Wire up external resources (one-time UI setup)
+
+This step is still UI-driven — it's just storing two static pieces of info for the agent: **credentials** and **which external scope to point at**.
+
+### Personal credentials
+
+Go to **Settings → External credentials → + New**.
+
+- Pick a Provider: GitHub / Jira / TAPD
+- Fill in the credential fields — GitHub needs only a token; Jira needs email + token + site URL; TAPD needs API account + token + workspace ID
+- Click **Test connection** to validate
+
+Credentials are AES-GCM encrypted at rest. **MCP tools never expose plaintext tokens to the agent** — the niuniu proxy injects the credential at the request boundary when the agent makes an outbound call.
+
+### Project external sources
+
+Go to **Project detail → Settings → External sources → + Add**.
+
+- Pick an existing credential
+- Fill in the external scope: `owner/repo` for GitHub, Project Key for Jira, Workspace ID for TAPD
+- Give it a `source_key` — the agent refers to the source by this key
+
+A Project can attach multiple sources (e.g. two GitHub repos plus a Jira project).
+
+### External proxy whitelist (recommended)
+
+Go to **Settings → External proxy**.
+
+For each Provider you can configure a path / method whitelist that bounds what endpoints the agent can call (e.g. only `GET /repos/acme/*` and `POST /repos/acme/*/issues/*/comments`). Every outbound request also lands in the audit log on this page.
+
+## Step 2: Let the agent query external systems from a workspace
+
+When a workspace starts the agent, Niuniu auto-loads the MCP tools dedicated to external integration. The agent can call them directly:
+
+| MCP tool | Purpose |
+|---|---|
+| `list_providers` | List configured providers and their connection status |
+| `list_external_sources` | List the external sources attached to this Project (returns `provider` + `source_key`) |
+| `get_provider_schema` | Fetch the Provider's API schema (OpenAPI or an AI-generated profile), so the agent learns which endpoints to use |
+| `call_external_api` | Actually make the call — args: `provider` / `method` / `path` / `query` / `body`. The proxy handles **auth injection, whitelist enforcement, audit logging** |
+| `list_issues` | Read current Kanban issues (by column / label / keyword) — used for dedup before writes |
+| `batch_create_issues` | Bulk-create tasks into the **first column** of the project's Kanban |
+
+### A typical prompt
+
+Just tell the agent the **source**, **conditions**, and **expected output**:
+
+> Pull open issues from `acme/payments` on GitHub that are labeled `area/billing` and updated in the last 14 days. Drop the ones already on the Kanban (match by title). Sort the remainder by priority and bulk-add them to the To Do column. Include the GitHub link in each issue's description.
+
+The agent expands this into a chain of MCP calls:
+
+1. `list_external_sources` — find the `source_key` for `acme/payments`
+2. `call_external_api(provider=github, method=GET, path=/repos/acme/payments/issues, query={state:'open', labels:'area/billing', since:'...'})`
+3. `list_issues(search=...)` — pull current Kanban state for dedup
+4. **Show you a "ready to write" preview and wait for confirmation**
+5. On confirmation, `batch_create_issues(tasks=[...])`
+
+> For side-effecting tools like `batch_create_issues`, the tool-permission system pops a card and asks you to approve each invocation ([chat permission prompts](/docs/guides/agent#structured-agent-mode)), so you never get surprise writes.
+
+## Step 3: Integrate results onto the Kanban
+
+`batch_create_issues` lands in the project's **first column** (To Do by default). Each task carries a `title` plus optional `description`, `labels`, etc.
+
+Once written, those issues behave identically to hand-created ones — drag across columns, comment, launch a workspace from them; the GitHub / Jira link in the description stays available for round-trips.
+
+### Refresh and writeback also go through the agent
+
+There's no automatic two-way sync. **Every direction of sync is your explicit instruction, executed by the agent calling `call_external_api`**:
+
+- Check upstream changes — "What's changed on the GitHub issue mirrored as #142 in the last 24h?"
+- Sync a niuniu comment to GitHub — "Sync the comment I just wrote on issue #142 to the corresponding GitHub issue"
+- Close upstream — "I'm about to close issue #142. Close the matching GitHub issue too, with reason 'merged into main'"
+
+This "active writeback" sidesteps two-way-sync conflicts — every sync is your instruction, and which side is source-of-truth is decided per-prompt.
+
+## Common scenarios
+
+- **Monday morning brief**: a [schedule](/docs/guides/agent#schedules-scheduled-runs) fires the workspace at 8:30 Mon with a prompt like "pull last week's closed issues and merged PRs from the acme org, group by product area into a markdown report"
+- **Bug triage**: a daily schedule pulls newly opened GitHub issues; the agent grades each as "full repro / has logs / vague" and lands them in the matching Kanban column with appropriate labels
+- **Cross-platform digest**: ask the agent to query GitHub + Jira simultaneously, merge today's-due tasks into a single TODO list, and post it to the workspace blackboard via `blackboard_write`
+- **PR follow-through**: schedule the agent every 4 hours to scan relevant PRs and surface any whose reviewer hasn't replied in over 24h onto the Kanban To Do column
+
+## Tips
+
+- **Start from the schema**: have the agent call `get_provider_schema` first so endpoint paths and parameter names come from the spec, not guesswork. GitHub ships a full OpenAPI; other providers get an AI-generated profile from Niuniu
+- **Dry-run first**: on the first run, write the prompt as "list it for me — **don't write anything yet**". Once the logic is right, then turn it loose
+- **Always dedup via `list_issues`**: before any bulk write, pull current Kanban state and have the agent match in memory; this avoids duplicate issues
+- **Narrow the whitelist**: in External proxy, restrict `call_external_api` to the exact paths you need; that's your guardrail against the agent calling something dangerous (deleting a repo, force-closing a PR)
+- **Audit log is replayable**: every `call_external_api` request is logged — when results look wrong, replay from the log instead of adding instrumentation
+
+## Troubleshooting
+
+| Symptom | Likely cause |
+|---|---|
+| `list_providers` returns empty | No personal credential configured — visit **Settings → External credentials** |
+| `list_external_sources` returns empty | No external source bound to this Project — visit **Project Settings → External sources** |
+| `call_external_api` returns 401 / 403 | Credential expired or scope insufficient — regenerate the token, ensure `repo` / `read:org` (etc.) are granted |
+| `call_external_api` reports "path not in whitelist" | Add the required path to **Settings → External proxy** |
+| `batch_create_issues` looks stuck | A permission card is waiting for approval — check the chat thread |
+
+## Next steps
+
+- [Kanban & Issues](/docs/guides/kanban) — what to do with issues once they're on the Kanban
+- [Workspace & agent chat](/docs/guides/agent) — how the agent works inside a workspace, and the permission-prompt mechanism
+- [Core concepts](/docs/concepts) — how Project / Workspace / Agent relate

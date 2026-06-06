@@ -1,0 +1,147 @@
+---
+title: "Workspace & agent chat"
+description: "Create workspace, PTY vs proxy paths, message history, cost tracking, autohost, schedules, and project learnings."
+group: guides
+order: 2
+---
+
+The workspace is where you collaborate with Claude Code. Niuniu offers two agent integration paths — choose based on your workflow.
+
+## Launch a workspace
+
+The most common path is launching from an issue (see the [Kanban guide](/docs/guides/kanban)). You can also go directly to the **Workspaces** tab and click **+ New**. When creating a workspace you can optionally link it to an issue and choose which repositories to attach.
+
+## PTY terminal mode
+
+**Workspace → Terminal tab**. This is a real terminal running the `claude` CLI — identical to running `claude` locally:
+
+- Supports colored output and ANSI control sequences
+- You can type any command directly in the terminal (`git`, `ls`, test runners, etc.)
+- Niuniu bridges the character stream to the browser over WebSocket
+- Terminal history is not persisted (it clears when the agent restarts)
+
+Best for: free-form exploration and debugging sessions that need real-time interactivity.
+
+## Structured agent mode
+
+**Workspace → Chat tab**. This is Niuniu's own chat panel:
+
+- Every message (your prompt and Claude's reply) is persisted to the database
+- Token cost is tracked automatically; view the usage curve in the **Workspace → Cost** tab
+- Supports copying individual messages, quoting replies, and @-mentioning files
+- History survives browser refreshes, shutdowns, and restarts
+
+Best for: long-running workflows, audit trails of discussions, and cross-device access.
+
+## Switching between modes
+
+The two paths **share workspace state** — files, worktrees, and git history are identical in both; only the agent interface differs. You can freely mix both modes in the same workspace.
+
+## File tree and diff
+
+The **Files** sidebar shows the full workspace file tree. **Diff** shows the current git changes compared to the base branch.
+
+## Autohost (automation)
+
+Autohost lets the agent keep making progress when you're away from the screen — nightly test runs, batch refactors, long-tail implementations no longer need you to babysit them.
+
+### Where to configure
+
+Workspace toolbar → **⚙ Workspace settings** → find the **Autohost** section → click **Configure autohost…**. The main knobs:
+
+- **Auto-continue rounds**: how many times Niuniu will auto-fire a "continue" prompt after the agent finishes a reply (default 0 = off)
+- **Error retry count**: how many times a failed tool call or shell command gets retried automatically
+- **Continue / recovery prompt**: the exact wording sent on each auto-trigger. The default is a terse "continue"; you can replace it with something stricter like "first cross-check the current progress, then proceed to the next step"
+- **Trigger conditions**: optionally fire only after a specific [Harness](/docs/concepts#harness-engineering-standards) gate passes or fails
+
+### LLM-first judge
+
+By default Autohost decides "continue or not" with a ratio rule; switch on **LLM-first mode** and a Claude judge evaluates each round — should we *continue*, *pause*, or *stop*? Every decision is recorded in the `autohost_judge_events` table along with its cost, so you can review the audit trail under **Workspace → Cost**.
+
+### When to use it
+
+- Overnight full regression test runs
+- Large batch refactors (rename / API migrations) where the task list is fixed
+- Long-running feature implementations where occasional tool errors need self-healing
+
+When **not** to use it: open-ended exploration without a clear goal, scripts that touch production data, design decisions that require human judgment.
+
+## Schedules (scheduled runs)
+
+Schedules let a workspace fire on a timer — even when you're off-shift, on PTO, or with your laptop closed. Common uses: "run the regression suite nightly", "summarize last week's code reviews every Monday morning", "send a one-shot reminder at 5pm".
+
+Schedules **belong to a workspace** and run inside it — this is intentional, so the worktree, env vars, and agent context are all consistent. If you want several workspaces to share a cadence, add a schedule to each one.
+
+### Creating a schedule
+
+Two entry points:
+
+- **Workspace detail → Schedules tab → + New** (manages this workspace's schedules)
+- **Top-level Schedules nav** (view every workspace's schedule in one place — handy for catching conflicts)
+
+Fields:
+
+| Field | Description |
+|---|---|
+| **Name** | Human-readable label; shows up in the run history |
+| **Type** | `cron` (recurring) or `once` (single fire) |
+| **Cron expression** | cron type only — standard 5- or 6-field, e.g. `0 2 * * *` for 2am daily |
+| **Run at** | once type only — absolute time (with timezone) |
+| **Default message** | The prompt actually sent to the agent on trigger, e.g. "run `make test` and post a summary of failures as an issue comment" |
+| **Enabled** | Toggle; disabled schedules keep their config but never fire |
+
+Niuniu shows the "next run at" in the list so you can sanity-check the schedule at a glance.
+
+### Trigger flow
+
+When the firing time hits, the scheduler:
+
+1. Checks that the workspace still exists and the `triggered_by` user is still an owner / member — schedules whose creator left the org are auto-disabled
+2. If the workspace has an `on_schedule` [Harness](/docs/concepts#harness-engineering-standards) gate, runs it first; a failed gate **skips this run** (still recorded as a `schedule_run`)
+3. Spins up the workspace's agent and sends the **default message** as the prompt
+4. One execution = one `schedule_run` record: status, message, start/end timestamps are all kept
+
+### Run history
+
+**Workspace → Schedules → History** lists recent `schedule_run`s with status `success` / `failure` / `skipped` (gate-rejected). Click any row to jump into the corresponding agent session and inspect the actual messages and cost.
+
+### Tips
+
+- Stagger cron times — when multiple schedules fire on the same minute, agent runs queue up; offset test jobs and report jobs by a few minutes
+- Keep the default message goal-oriented ("summarize the test results into an issue comment"), not step-by-step ("first cd into… then run…") — let the agent figure out the steps
+- For long-running jobs (>30 min) turn on [Autohost](#autohost-automation) alongside, otherwise the agent stalls after its first reply waiting for input
+- For jobs that touch production data, attach an `on_schedule` Harness gate (e.g. an `ai_judge` review) as a safety net
+
+## Project learnings (experience capture)
+
+Project learnings make "we already hit this bug last time" stop happening. Patterns, gotchas, decisions, and error fixes that the agent discovers inside one workspace can be filed explicitly; the next workspace in the same Project starts with them pre-loaded.
+
+### Writing
+
+The agent itself writes via the `learning_write` MCP tool exposed by the Niuniu MCP server. Four common types:
+
+| Type | Use |
+|---|---|
+| **pattern** | A recurring idiom / architectural habit in the project |
+| **gotcha** | An easy-to-miss trap or counterintuitive behavior |
+| **decision** | A settled design choice — don't reopen the debate |
+| **error-fix** | The root cause and remedy for a class of errors |
+
+You can also just tell the agent in chat: "save what you just found as a learning" — and the agent will call the tool for you.
+
+### Reading
+
+Learnings are stored per Project. When a workspace starts, Niuniu renders all of the Project's learnings into `.learnings.generated.md` at the worktree root — the file ships in the workspace alongside the repo, so a fresh agent picks it up from its initial context on startup.
+
+UI: **Project detail → Learnings** tab lets you browse, edit, or delete any entry. The `learning_list` and `learning_delete` MCP tools let the agent itself query and prune (e.g. removing an outdated learning when it discovers the rationale no longer applies).
+
+### Tips
+
+- After fixing a **non-obvious** bug, ask the agent to file an `error-fix` learning — the root cause matters more than the diff
+- Code style and tech-stack choices belong in `decision` so a fresh agent won't re-propose alternatives
+- Don't dump temporary debug notes into learnings — a learning is a contract for the *next* agent, not a todo for the current session
+
+## Next steps
+
+- [Git worktree & code review](/docs/guides/worktree)
+- [FAQ & troubleshooting](/docs/faq) — agent won't start, claude CLI not found, etc.

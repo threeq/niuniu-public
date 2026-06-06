@@ -1,0 +1,218 @@
+---
+title: "Personal desktop install"
+description: "Binary download, first launch, system dependencies, Claude / Codex subscription login, and third-party model accounts."
+group: install
+order: 1
+---
+
+Personal is Niuniu's single-machine local edition: all data lives in a SQLite file on your computer — no server, no PostgreSQL required. Download, launch, and you're ready to go.
+
+This guide walks you through three stages: **install the binary → set up dependencies → configure your account**. Follow it end-to-end and you'll have an agent running in under five minutes.
+
+## 1. System requirements
+
+- **macOS** 11+ (Apple Silicon or Intel) — WKWebView is part of the OS, no extra dependencies
+- **Windows** 10+ x64 — requires the [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
+  - Stock Win10 / Win11 Home / Pro **bundle** WebView2 Runtime
+  - **LTSC, Enterprise stripped-down, Windows Server, IoT, and similar SKUs ship without it** — install the "Evergreen Standalone Installer" (x64) manually
+  - If missing, niuniu-personal will show a **native dialog** with a button to open the download page — install it, then relaunch
+- **Linux** glibc 2.31+ x64 — requires the system WebKitGTK library (without it the dynamic linker fails before our process even starts)
+  - Debian / Ubuntu: `sudo apt install libwebkit2gtk-4.1-0`
+  - Fedora / RHEL: `sudo dnf install webkit2gtk4.1`
+  - Arch / Manjaro: `sudo pacman -S webkit2gtk`
+  - Server / minimal images typically don't include this package
+
+## 2. Download and first launch
+
+Go to [GitHub Releases](https://github.com/threeq/niuniu-public/releases), find the latest release, and download the binary for your platform:
+
+| Platform | File |
+|---|---|
+| macOS Apple Silicon | `niuniu-personal-<version>-darwin-arm64` |
+| macOS Intel | `niuniu-personal-<version>-darwin-amd64` |
+| Windows | `niuniu-personal-<version>-windows-amd64.exe` |
+| Linux | `niuniu-personal-<version>-linux-amd64` |
+
+> `<version>` is the release tag, e.g. `v1.0.7`.
+
+### Mainland China mirror (Baidu Netdisk)
+
+If GitHub is slow or unreachable, the same binaries are mirrored on Baidu Netdisk:
+
+- Link: [https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7](https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7)
+- Extraction code: `hmn7`
+
+> Filenames and versions on the mirror match GitHub Releases; for the very latest release, GitHub Releases remains authoritative.
+
+**macOS / Linux**: mark the downloaded file executable (`chmod +x niuniu-personal-*`) and double-click. On macOS you may need to allow the unsigned binary in System Settings → Privacy & Security on first run.
+**Windows**: double-click the `.exe` — you may need to approve the SmartScreen prompt.
+
+After launch, your browser will automatically open `http://localhost:3000`. The Personal edition runs without any login — you'll land directly on the main console.
+
+## 3. System dependencies
+
+Niuniu's agent drives a CLI to perform code actions, which requires these external tools:
+
+| Tool | Purpose | Minimum |
+|---|---|---|
+| **Node.js** | Required by the npm-installed agent CLI | v20+ LTS |
+| **Python 3** | Occasionally invoked by agents for scripts and toolchains | 3.10+ |
+| **Git** | Worktree creation, diffs, and history reads | 2.30+ |
+| **Claude Code CLI or Codex CLI** | Talks to the model — install either one | Latest |
+
+Open **Settings → System dependencies** to see the install status, version, and absolute path for each tool. Installed tools show a green dot; missing tools show a red ✗ along with a **One-click install** button.
+
+### One-click install
+
+Personal edition invokes the right system package manager for you — no manual commands required:
+
+| Tool | Windows | macOS | Linux |
+|---|---|---|---|
+| Node.js | `winget install -e --id OpenJS.NodeJS.LTS` | `brew install node` | `sudo apt-get install -y nodejs` |
+| Python 3 | `winget install -e --id Python.Python.3.13` | `brew install python@3.13` | `sudo apt-get install -y python3` |
+| Git | `winget install -e --id Git.Git` | `brew install git` | `sudo apt-get install -y git` |
+| Claude Code CLI | `npm install -g @anthropic-ai/claude-code` | (same) | (same; needs `sudo` if your npm global prefix is in a system directory) |
+| Codex CLI (alternative) | `npm install -g @openai/codex` | (same) | (same) |
+
+After clicking **One-click install**, a live log panel appears below the card. On Windows, winget pops up a separate UAC dialog; on macOS/Linux output streams into the in-page log. When the install finishes, the page re-probes automatically.
+
+> **Both Claude Code CLI and Codex CLI depend on Node.js**, so install Node first. While `node` is missing, the install buttons on both cards are disabled. You only need one; having both installed is fine — you can switch per workspace.
+
+### Manual install
+
+If the current OS has no winget / brew / apt (for example a slim Linux image or an offline machine), the one-click button becomes "Open download page" and links to the official site for manual install:
+
+- Node.js: [nodejs.org](https://nodejs.org/)
+- Python 3: [python.org/downloads](https://www.python.org/downloads/)
+- Git: [git-scm.com/downloads](https://git-scm.com/downloads)
+- Claude Code CLI: [docs.claude.com/en/docs/claude-code/setup](https://docs.claude.com/en/docs/claude-code/setup)
+- Codex CLI: [github.com/openai/codex](https://github.com/openai/codex)
+
+After installing, click **Re-probe** on the settings page to refresh state.
+
+### Git identity
+
+Once Git is installed, the Git card on **Settings → System dependencies** shows the current global identity (`user.name <user.email>`). Click **Edit** to write the values straight into `~/.gitconfig`. If git identity is unset, Niuniu blocks adding a new repository until it's configured.
+
+## 4. Model subscription (Claude / Codex)
+
+Niuniu talks to the model through the `claude` or `codex` CLI. The most common setup is to log in with your **Claude.ai / Claude Code subscription** (recommended for Claude Pro / Max users) or your **ChatGPT subscription** (recommended for ChatGPT Plus / Pro users). You only need one of these; if you'd rather use a third-party platform (Zhipu / Qwen / DeepSeek / ...), skip ahead to [5. Third-party model accounts](#5-third-party-model-accounts-env-presets).
+
+### Login entrypoints
+
+Two equivalent entry points:
+
+1. **Settings → System dependencies** → click **Claude login** on the right side of the Claude Code CLI card
+2. **Settings → Claude accounts** → click **+ New account**, give it a name, then click **Log in**
+
+Either entry point launches an xterm-style terminal window that runs `claude /login`:
+
+1. Claude CLI prints an OAuth URL — **paste it into a browser**
+2. Complete the OAuth handshake; the callback page shows a code
+3. Paste the code back into Niuniu's login terminal and press Enter
+4. On success the window closes, the account card flips to "Logged in" and the bound email is shown
+
+> Credentials are stored under `~/.claude/` (Anthropic's official location). Niuniu never persists the raw token — it only keeps a mapping from account name to credential directory.
+
+### Multi-account and default account
+
+Personal edition supports multiple Claude accounts (for example a "Personal" and a "Work" account). In **Settings → Claude accounts**:
+
+- Each account has its own name, status (Logged in / Not logged in / Login failed), and last-used time
+- The top-level "**Default account for new workspaces**" selector pre-fills new workspaces
+- Any single workspace can override the default in its own settings
+
+### Usage tracking
+
+Expand a logged-in account in **Settings → Claude accounts** to see:
+
+- **5-hour billing block**: input / output / cache tokens used in the active window
+- **7-day window**: separate totals for all models / Sonnet family / Opus family
+- **Subscription tier**: aggregated from the Claude CLI's local session logs
+
+> All data comes from the local `~/.claude/` session JSONL — **nothing is uploaded to any server**.
+
+### Codex account
+
+If you go with the Codex CLI (ChatGPT Plus / Pro), the login entry point is **Settings → Codex accounts**:
+
+1. Click **+ New account** and give it a name
+2. A terminal window runs `codex` and walks through the OpenAI OAuth flow
+3. Credentials are stored under `~/.codex/` (the Codex CLI's official directory)
+
+Multi-account, default account, and per-workspace switching all work the same way as Claude accounts — just managed under **Settings → Codex accounts**.
+
+## 5. Third-party model accounts (env presets)
+
+If you'd rather route to a Chinese model provider — **Kimi / Qwen / DeepSeek / MiniMax / Zhipu** — instead of Anthropic, you can point the `claude` CLI at an Anthropic-compatible endpoint via environment variables. Niuniu ships with five built-in presets under **Settings → Environment variables**:
+
+| Preset | Provider | Endpoint |
+|---|---|---|
+| 智谱 (Zhipu) | GLM family | `https://open.bigmodel.cn/api/anthropic` |
+| 通义千问 (Qwen) | Qwen 3.6 | `https://coding.dashscope.aliyuncs.com/apps/anthropic` |
+| DeepSeek | DeepSeek V4 | `https://api.deepseek.com/anthropic` |
+| MiniMax | M2.7 | `https://api.minimaxi.com/anthropic` |
+| Kimi | K2.6 | `https://api.moonshot.cn/anthropic` |
+
+### Fill in your API key
+
+Each preset already includes the model names and endpoint URL. **The only field you need to replace is `ANTHROPIC_AUTH_TOKEN`** — substitute the placeholder (e.g. `${YOUR_MOONSHOT_API_KEY}` / `sk-` / `.`) with your real key from the provider:
+
+1. Open **Settings → Environment variables**, click the ✏ Edit button next to a preset (e.g. Kimi)
+2. Find the `ANTHROPIC_AUTH_TOKEN` row and paste in your real key
+3. Save
+
+Where to get the keys:
+
+- Zhipu BigModel: [open.bigmodel.cn/usercenter/proj-mgmt/apikeys](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys)
+- Qwen DashScope: [dashscope.console.aliyun.com/apiKey](https://dashscope.console.aliyun.com/apiKey)
+- DeepSeek: [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+- MiniMax: [platform.minimaxi.com/user-center/basic-information/interface-key](https://platform.minimaxi.com/user-center/basic-information/interface-key)
+- Kimi (Moonshot): [platform.moonshot.cn/console/api-keys](https://platform.moonshot.cn/console/api-keys)
+
+### Enable a preset in a workspace
+
+A preset is just a template — to actually route a workspace through a third-party model, import the preset from the workspace settings:
+
+1. Open a workspace → top-right ⚙ Settings → **Environment variables**
+2. Click **Import from preset** → pick the target preset (e.g. Kimi)
+3. Save. When the agent starts, the env vars are injected into the `claude` CLI process
+
+> Each workspace uses one model setup at a time. Importing a preset **appends** to existing variables; same-name variables are kept (existing wins) to avoid silent overrides.
+
+### Custom preset
+
+For providers not in the list above (e.g. a self-hosted Claude-compatible gateway), click **+ New preset** and enter your own name, description, and key/value pairs. Frequently used variables:
+
+- `ANTHROPIC_BASE_URL`: provider endpoint (required)
+- `ANTHROPIC_AUTH_TOKEN`: auth token (required)
+- `ANTHROPIC_MODEL`: default model name (optional)
+- `ANTHROPIC_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL`: override each tier
+- `API_TIMEOUT_MS`: per-request timeout (milliseconds)
+- `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`: opt out of non-essential telemetry
+
+## 6. Data directory
+
+All Niuniu data is stored under `~/.niuniu/`:
+
+```
+~/.niuniu/
+├── config.yaml          # configuration
+├── niuniu.db            # SQLite database
+├── personal.boot.lock   # single-instance lock
+└── users/<id>/          # your workspace and repository directories
+```
+
+Claude official credentials live separately under `~/.claude/` (Anthropic's own directory, managed by the `claude` CLI).
+
+To migrate to a new machine: copy both `~/.niuniu/` and `~/.claude/`.
+
+## 7. Upgrading
+
+Download the new binary and replace the old one. The database migrates automatically — no manual steps needed. Back up `~/.niuniu/` before upgrading.
+
+## Next steps
+
+- [5-minute quickstart](/docs/quickstart) — get your first workspace running
+- [Workspace & agent guide](/docs/guides/agent) — how the agent loop actually works
+- For team collaboration, see [Self-Hosted Team](/docs/install/self-hosted)

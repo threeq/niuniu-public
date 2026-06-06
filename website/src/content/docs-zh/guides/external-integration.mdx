@@ -1,0 +1,124 @@
+---
+title: 外部系统集成
+description: 在 Workspace 里让 agent 通过 MCP 主动查询 GitHub / Jira / TAPD，由 AI 完成过滤、分析、汇总，再把需要的工单落到看板。
+group: guides
+order: 4
+---
+
+牛牛不在产品里给你一个"浏览外部 issue + 勾选 + 导入"的按钮——那会把过滤、配对、去重、决策都堆到 UI 里，又难表达又难定制。
+
+我们走的是另一条路：**workspace 里的 agent 通过 MCP 协议主动查询外部系统，由 AI 完成过滤 / 分析 / 去重 / 汇总，再把真正需要的数据写回看板**。
+
+这种模型的几个直接好处：
+
+- 集成规则用自然语言写在 prompt 里，不必等产品支持各种下拉菜单和组合条件
+- 任何可以描述的查询都能跑——"上周关闭的 P0 bug"、"label 是 `area/billing` 且 mention 我的 issue"、"reviewer 30 天没回的 PR"
+- 中间步骤完全可见，agent 把每一次查询和判断都摊出来，方便核对
+
+下面分三步：先把可用资源（凭证 + 外部范围）配好；然后在 workspace 让 agent 通过 MCP 查询；最后把结果整理回看板。
+
+## 第一步：接入外部资源（一次性 UI 配置）
+
+这一步还是 UI 完成，目的是给 agent 把两个静态信息存好：**凭证** + **指向哪个外部资源**。
+
+### 个人凭证
+
+入口：**设置 → 外部凭证 → + 新建**。
+
+- 选 Provider：GitHub / Jira / TAPD
+- 填凭证字段——GitHub 只要 token；Jira 需要 email + token + site URL；TAPD 需要 API account + token + 企业 ID
+- 点 **测试连接** 验证
+
+凭证 AES-GCM 加密落库，**MCP 工具永远不会把明文 token 暴露给 agent**——agent 调出站 API 时，niuniu 代理在请求边界自动注入凭证。
+
+### 项目外部数据源
+
+入口：**Project 详情 → 设置 → 外部数据源 → + 添加**。
+
+- 选一份已有凭证
+- 填外部范围：GitHub 用 `owner/repo`、Jira 用 Project Key、TAPD 用 Workspace ID
+- 起一个 `source_key`，agent 调用时按这个 key 引用
+
+一个项目可挂多个 source（例如同时跟踪两个 GitHub repo + 一个 Jira project）。
+
+### 外部代理白名单（推荐）
+
+入口：**设置 → 外部代理**。
+
+可以为每个 Provider 配一份 path / method 白名单，限定 agent 能调用的 endpoint 范围（例如只允许 `GET /repos/acme/*` 与 `POST /repos/acme/*/issues/*/comments`）。所有出站请求都进 audit log，可在该页面回看。
+
+## 第二步：在 workspace 里让 agent 查询外部系统
+
+workspace 启动 agent 后，niuniu 自动注入了一批专门为外部集成准备的 MCP 工具，agent 直接调用即可：
+
+| MCP 工具 | 作用 |
+|---|---|
+| `list_providers` | 列出已配凭证的 Provider 与连接状态 |
+| `list_external_sources` | 列出当前项目挂的外部数据源（`provider` + `source_key`） |
+| `get_provider_schema` | 拉 Provider 的 API schema（OpenAPI 或 AI 生成的 profile），让 agent 自己学会用哪些 endpoint |
+| `call_external_api` | 真正发出外部调用——参数：`provider` / `method` / `path` / `query` / `body`。代理负责 **auth 注入、白名单校验、audit log** |
+| `list_issues` | 读当前看板的 issue（按列 / 标签 / 关键词），用于写入前去重 |
+| `batch_create_issues` | 批量把任务写到项目看板**第一列** |
+
+### 典型 prompt
+
+只要告诉 agent **来源**、**条件**、**期望产出**：
+
+> 从 GitHub `acme/payments` 仓库把 label 是 `area/billing`、最近 14 天有更新的 open issue 拉出来；去掉已经在看板里的（按标题去重），剩下的按 priority 排序后批量加进看板待办列，每条 issue 描述里附上 GitHub 链接。
+
+agent 会自己展开成一串 MCP 调用：
+
+1. `list_external_sources` —— 找到 `acme/payments` 的 `source_key`
+2. `call_external_api(provider=github, method=GET, path=/repos/acme/payments/issues, query={state:'open', labels:'area/billing', since:'...'})`
+3. `list_issues(search=...)` —— 拿当前看板的 issue 做去重比对
+4. **给你一份"准备写入"清单等确认**
+5. 确认后 `batch_create_issues(tasks=[...])`
+
+> 涉及 `batch_create_issues` 这类有副作用的工具时，工具权限系统会弹卡片让你逐项确认（[chat 权限提示机制](/docs/guides/agent#结构化代理模式)），避免误操作。
+
+## 第三步：把结果整合到看板
+
+`batch_create_issues` 落进项目**第一列**（默认 To Do）。每条 task 至少有 `title`，可选 `description`、`labels` 等字段。
+
+写入之后这些 issue 跟手建的 issue 完全等价：拖列、加评论、启动 workspace 都行；描述里附的 GitHub / Jira 链接随时可以回查。
+
+### 刷新与写回也走 agent
+
+不存在自动双向同步。**所有方向的同步都由你下指令、agent 调 `call_external_api` 完成**：
+
+- 想看外部 issue 是否更新 → "看下 #142 对应的 GitHub issue 最近 24 小时有什么变化"
+- 想把 niuniu 评论同步到 GitHub → "把我刚在 issue #142 留的评论同步到对应的 GitHub issue"
+- 想关闭外部 issue → "issue #142 我准备 close，把对应 GitHub issue 也关掉，关闭原因留'已合入 main'"
+
+这种"主动写回"避免了双向同步的冲突 ——每一次同步都明确是你的指令，谁是 source of truth 由 prompt 决定。
+
+## 典型场景
+
+- **周一晨会清单**：用 [定时任务](/docs/guides/agent#定时任务schedules) 每周一 8:30 触发 workspace，prompt 是"拉 acme org 上周 closed 的 issue 与 merged PR，按业务线归类成 markdown 报告"
+- **缺陷分诊**：每天定时把 GitHub 新开的 issue 拉过来，agent 按"复现步骤完整 / 含日志 / 描述模糊"三档分流，分别加 label 后落到看板对应列
+- **跨平台聚合视图**：让 agent 同时调 GitHub + Jira，把今天 due 的 task 合并成一份"代办清单"贴到 workspace 黑板（`blackboard_write`）
+- **PR 进度追踪**：定时跑，对项目相关 PR 调 `call_external_api`，把 reviewer 没回复 > 24h 的 PR 加进看板待办
+
+## 实践建议
+
+- **从 schema 开始**：先让 agent `get_provider_schema` 学一遍，避免 endpoint / 参数写错；GitHub 有完整 OpenAPI，其他 Provider 由 niuniu AI 生成 profile
+- **永远先 dry-run**：第一次让 agent 拉数据时，prompt 写"列出来给我看，**不要写库**"；逻辑确认后再放权
+- **去重靠 `list_issues`**：批量导入前先把当前看板状态拉一遍，agent 在内存里做匹配，避免重复 issue
+- **收窄白名单**：在外部代理里把 `call_external_api` 限定到必须用的 path，杜绝 agent 调危险接口（删 repo / 关 PR）
+- **审计日志可回放**：所有 `call_external_api` 都进 audit log，怀疑数据错时直接看记录复现
+
+## 故障排查
+
+| 现象 | 原因 |
+|---|---|
+| `list_providers` 返回空 | 个人凭证没配——去 **设置 → 外部凭证** |
+| `list_external_sources` 返回空 | 当前项目没挂外部数据源——去 **Project 设置 → 外部数据源** |
+| `call_external_api` 401 / 403 | 凭证过期或 scope 不够——重新生成 token，注意 `repo` / `read:org` 等必要权限 |
+| `call_external_api` 报"path 不在白名单" | 在 **设置 → 外部代理** 把所需 path 加进白名单 |
+| `batch_create_issues` 没反应 | 工具权限提示被忽略——看 chat 里有没有等你确认的卡片 |
+
+## 下一步
+
+- [Kanban 与 Issue](/docs/guides/kanban) — 写入看板后的工单流转
+- [Workspace 与 Agent 对话](/docs/guides/agent) — agent 在 workspace 里的工作机制与权限提示
+- [核心概念](/docs/concepts) — Project / Workspace / Agent 的关系

@@ -1,0 +1,28 @@
+---
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+import type { DocEntry } from '@/lib/docs-nav';
+
+interface Props { prev: DocEntry | null; next: DocEntry | null; }
+const { prev, next } = Astro.props;
+const locale: Locale = getLocaleFromUrl(Astro.url);
+---
+<nav class="mt-12 pt-6 border-t border-[rgb(var(--color-border))] flex items-stretch justify-between gap-4">
+  {prev ? (
+    <a
+      href={localePath(locale, `/docs/${prev.id}`)}
+      class="flex-1 rounded-lg border border-[rgb(var(--color-border))] p-4 hover:bg-[rgb(var(--color-card))]"
+    >
+      <div class="text-xs text-[rgb(var(--color-muted))]">← {t(locale, 'docs.prev')}</div>
+      <div class="mt-1 font-medium">{prev.data.title}</div>
+    </a>
+  ) : <div class="flex-1"></div>}
+  {next ? (
+    <a
+      href={localePath(locale, `/docs/${next.id}`)}
+      class="flex-1 rounded-lg border border-[rgb(var(--color-border))] p-4 text-right hover:bg-[rgb(var(--color-card))]"
+    >
+      <div class="text-xs text-[rgb(var(--color-muted))]">{t(locale, 'docs.next')} →</div>
+      <div class="mt-1 font-medium">{next.data.title}</div>
+    </a>
+  ) : <div class="flex-1"></div>}
+</nav>

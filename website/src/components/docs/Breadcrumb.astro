@@ -1,0 +1,13 @@
+---
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+interface Props { group: string; title: string; }
+const { group, title } = Astro.props;
+const locale: Locale = getLocaleFromUrl(Astro.url);
+---
+<nav class="text-xs text-[rgb(var(--color-muted))] mb-4" aria-label="Breadcrumb">
+  <a href={localePath(locale, '/docs/intro')} class="hover:text-[rgb(var(--color-fg))]">{t(locale, 'nav.docs')}</a>
+  <span class="mx-1">/</span>
+  <span>{t(locale, `groups.${group}`)}</span>
+  <span class="mx-1">/</span>
+  <span class="text-[rgb(var(--color-fg))]">{title}</span>
+</nav>

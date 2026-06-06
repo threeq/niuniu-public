@@ -1,0 +1,57 @@
+---
+import "@/styles/global.css";
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+import Header from '@/components/shell/Header.astro';
+import Footer from '@/components/shell/Footer.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const lang = locale === 'zh' ? 'zh-CN' : 'en';
+const { title, description } = Astro.props;
+const pageTitle = title ?? t(locale, 'site.title');
+const pageDesc = description ?? t(locale, 'site.description');
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const altPath = locale === 'zh' ? localePath('en', Astro.url.pathname) : Astro.url.pathname.replace(/^\/en/, '') || '/';
+const altUrl = new URL(altPath, Astro.site).toString();
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDesc} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang={locale === 'zh' ? 'en' : 'zh-CN'} href={altUrl} />
+    <link rel="alternate" hreflang="x-default" href={new URL('/', Astro.site).toString()} />
+
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDesc} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site).toString()} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script is:inline>
+      (() => {
+        const stored = localStorage.getItem('theme');
+        const sysDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (stored === 'dark' || (!stored && sysDark)) {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
+  </head>
+  <body class="flex min-h-screen flex-col">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:bg-[rgb(var(--color-primary))] focus:text-white focus:rounded focus:px-3 focus:py-1 focus:z-50">Skip to content</a>
+    <Header />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>

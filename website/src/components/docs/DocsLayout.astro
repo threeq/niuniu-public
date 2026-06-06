@@ -1,0 +1,42 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Sidebar from './Sidebar.astro';
+import TableOfContents from './TableOfContents.astro';
+import Breadcrumb from './Breadcrumb.astro';
+import PrevNext from './PrevNext.astro';
+import { findPrevNext, getDocsForLocale } from '@/lib/docs-nav';
+import { getLocaleFromUrl, t, type Locale } from '@/lib/i18n';
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  currentSlug: string;
+  title: string;
+  description?: string;
+  group: string;
+  headings: MarkdownHeading[];
+  editPath: string;        // path under repo for "edit on github"
+}
+const { currentSlug, title, description, group, headings, editPath } = Astro.props;
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const docs = await getDocsForLocale(locale);
+const { prev, next } = findPrevNext(docs, currentSlug);
+const editUrl = `https://github.com/niuniu-dev/niuniu/edit/main/${editPath}`;
+---
+<BaseLayout title={`${title} · ${t(locale, 'brand.name')}`} description={description}>
+  <div class="container-doc flex gap-8">
+    <Sidebar currentSlug={currentSlug} />
+    <article class="flex-1 min-w-0 py-8 max-w-3xl" data-pagefind-filter={`lang:${locale}`}>
+      <Breadcrumb group={group} title={title} />
+      <h1 class="text-3xl font-bold mb-2" data-pagefind-meta="title">{title}</h1>
+      {description && <p class="text-lg text-[rgb(var(--color-muted))] mb-6">{description}</p>}
+      <div class="prose prose-zinc dark:prose-invert max-w-none" data-pagefind-body>
+        <slot />
+      </div>
+      <p class="mt-8 text-sm text-[rgb(var(--color-muted))]">
+        <a href={editUrl} rel="noopener noreferrer" class="hover:text-[rgb(var(--color-fg))]">{t(locale, 'docs.edit_on_github')} →</a>
+      </p>
+      <PrevNext prev={prev} next={next} />
+    </article>
+    <TableOfContents headings={headings} />
+  </div>
+</BaseLayout>

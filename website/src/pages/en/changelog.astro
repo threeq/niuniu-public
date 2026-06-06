@@ -1,0 +1,83 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getLocaleFromUrl, t } from '@/lib/i18n';
+import { fetchReleases, formatDate, platformOf, formatSize, renderBody } from '@/lib/changelog';
+import Button from '@/components/ui/Button.astro';
+const locale = getLocaleFromUrl(Astro.url);
+const { releases, error } = await fetchReleases();
+---
+<BaseLayout title={`${t(locale, 'changelog.page_title')} · ${t(locale, 'brand.name')}`}>
+  <section class="container-page py-12">
+    <h1 class="text-4xl font-extrabold">{t(locale, 'changelog.page_title')}</h1>
+    <p class="mt-2 text-[rgb(var(--color-muted))]">{t(locale, 'changelog.subtitle')}</p>
+
+    <div class="mt-6 max-w-3xl rounded-xl border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] p-5">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="min-w-0">
+          <div class="font-semibold">{t(locale, 'changelog.netdisk_title')}</div>
+          <p class="mt-1 text-sm text-[rgb(var(--color-muted))]">{t(locale, 'changelog.netdisk_desc')}</p>
+        </div>
+        <Button href="https://pan.baidu.com/s/53LxPyt8N-wmPjUgx2fPQZA" target="_blank">
+          {t(locale, 'changelog.netdisk_cta')}
+        </Button>
+      </div>
+    </div>
+
+    {error && (
+      <div class="mt-8 rounded-md border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200">
+        {t(locale, 'changelog.fetch_error')}: {error}
+      </div>
+    )}
+
+    {!error && releases.length === 0 && (
+      <p class="mt-8 text-[rgb(var(--color-muted))]">{t(locale, 'changelog.empty')}</p>
+    )}
+
+    <ol class="mt-8 space-y-8 max-w-3xl">
+      {releases.map(r => (
+        <li class="rounded-xl border border-[rgb(var(--color-border))] p-6">
+          <div class="flex items-baseline gap-3 flex-wrap">
+            <h2 class="text-2xl font-bold">
+              <a href={r.html_url} class="hover:text-[rgb(var(--color-primary))]" rel="noopener noreferrer">
+                {r.name || r.tag_name}
+              </a>
+            </h2>
+            {r.prerelease && (
+              <span class="rounded-full bg-amber-100 px-2 py-0.5 text-xs text-amber-900 dark:bg-amber-900 dark:text-amber-100">prerelease</span>
+            )}
+          </div>
+          <div class="mt-1 text-sm text-[rgb(var(--color-muted))]">{formatDate(r.published_at)}</div>
+
+          {r.body && (
+            <div class="prose prose-sm dark:prose-invert mt-4 max-w-none" set:html={renderBody(r.body, locale)} />
+          )}
+
+          {r.assets.length > 0 && (
+            <div class="mt-5 flex flex-wrap gap-2">
+              {r.assets.map(a => (
+                <a
+                  href={a.browser_download_url}
+                  class="inline-flex items-center gap-2 rounded-md border border-[rgb(var(--color-border))] px-3 py-1.5 text-sm hover:border-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-primary))]"
+                  rel="noopener noreferrer"
+                >
+                  <span>{platformOf(a.name, locale)}</span>
+                  <span class="text-xs text-[rgb(var(--color-muted))]">{formatSize(a.size)}</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </li>
+      ))}
+    </ol>
+
+    <p class="mt-12 text-sm text-[rgb(var(--color-muted))]">
+      <a
+        href="https://github.com/threeq/niuniu-public/releases"
+        class="underline hover:text-[rgb(var(--color-primary))]"
+        rel="noopener noreferrer"
+      >
+        {t(locale, 'changelog.view_on_github')}
+      </a>
+    </p>
+  </section>
+</BaseLayout>

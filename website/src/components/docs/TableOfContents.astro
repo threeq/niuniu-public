@@ -1,0 +1,24 @@
+---
+import { getLocaleFromUrl, t, type Locale } from '@/lib/i18n';
+import type { MarkdownHeading } from 'astro';
+interface Props { headings: MarkdownHeading[]; }
+const { headings } = Astro.props;
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const filtered = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+<aside class="w-56 shrink-0 hidden lg:block py-8 pl-6 sticky top-14 self-start">
+  <div class="text-xs uppercase tracking-wider font-semibold text-[rgb(var(--color-muted))] mb-3">{t(locale, 'docs.on_this_page')}</div>
+  <ul class="space-y-1.5 text-sm border-l border-[rgb(var(--color-border))]">
+    {filtered.map((h) => (
+      <li>
+        <a
+          href={`#${h.slug}`}
+          class:list={[
+            'block pl-3 -ml-px border-l-2 border-transparent text-[rgb(var(--color-muted))] hover:text-[rgb(var(--color-fg))]',
+            h.depth === 3 ? 'pl-6' : ''
+          ]}
+        >{h.text}</a>
+      </li>
+    ))}
+  </ul>
+</aside>

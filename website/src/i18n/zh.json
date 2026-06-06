@@ -1,0 +1,122 @@
+{
+  "brand": {
+    "name": "牛牛"
+  },
+  "site": {
+    "title": "牛牛 — 目标驱动的并行 AI 开发工作站",
+    "description": "本地优先的 AI 开发工作站：写下目标，多个 AI Agent 自动并行完成，跨项目、跨仓库、跨 agent。"
+  },
+  "nav": {
+    "docs": "文档",
+    "pricing": "定价",
+    "changelog": "更新日志",
+    "github": "GitHub",
+    "search": "搜索",
+    "theme": "主题",
+    "lang": "语言",
+    "download": "下载"
+  },
+  "hero": {
+    "headline": "给定目标，让 AI 自动完成",
+    "subhead": "牛牛是本地优先的 AI 开发工作站：把要做的事拆成 issue，多个 AI Agent 并行驱动、自主闭环，跨项目、跨仓库协作。",
+    "cta_primary": "下载桌面版",
+    "cta_secondary": "了解团队私有版 →",
+    "dashboard_alt": "牛牛工作站界面截图：任务列表、并行对话面板、仓库提交记录与终端"
+  },
+  "goal_loop": {
+    "section_eyebrow": "核心特性",
+    "section_title": "目标驱动，自动闭环",
+    "section_subtitle": "你只负责定义目标，agent 自主完成从规划到验证的全过程，过程中只在真正被阻塞时回到你这里确认。",
+    "steps": [
+      { "n": "1", "title": "写下目标", "desc": "用一句话把要做的事提成 issue —— 不必拆解到代码级。" },
+      { "n": "2", "title": "Agent 自主规划", "desc": "进入 workspace 后，agent 读上下文、拆任务、列出执行计划。" },
+      { "n": "3", "title": "并行执行", "desc": "多个 workspace 同时推进各自目标，互不干扰；每个 agent 在自己的 git worktree 里直接动手。" },
+      { "n": "4", "title": "自动验证", "desc": "执行完成后跑测试、看 diff、做 self-review，发现问题继续修。" },
+      { "n": "5", "title": "回到你这里", "desc": "只有真正阻塞（凭据缺失、需要决策、风险操作）才弹通知，其余时候安静收尾。" }
+    ]
+  },
+  "deploy": {
+    "section_title": "选择你的部署方式",
+    "section_subtitle": "两种交付形态，从本地单机到企业私有化。",
+    "personal": {
+      "title": "桌面版",
+      "subtitle": "单机本地 · 三平台 · 零依赖",
+      "cta": "下载",
+      "features": ["macOS / Windows / Linux", "git worktree 隔离", "本地 SQLite 后端"]
+    },
+    "self_hosted": {
+      "title": "团队私有版",
+      "subtitle": "Docker · 私有化 · 不限用户",
+      "cta": "查看安装文档",
+      "features": ["docker compose 一键部署", "私有数据", "可定制审计"]
+    }
+  },
+  "features": {
+    "section_title": "核心能力",
+    "items": [
+      { "title": "目标驱动自动完成", "desc": "写下目标，agent 自主规划 → 执行 → 验证 → 完成；过程中遇到阻塞才回到你这里确认。" },
+      { "title": "多 Workspace 并行", "desc": "每个 workspace 一个 git worktree + 独立 agent 会话，互不干扰，多任务同时推进。" },
+      { "title": "Kanban 项目管理", "desc": "Issues / Checklists / Comments / Timeline 一站式跟踪。" },
+      { "title": "双路径 Agent 集成", "desc": "PTY 终端或结构化代理，按场景挑路径。" },
+      { "title": "Harness 多阶段流水线", "desc": "spec → plan → impl → test，分阶段自动化执行并设质量门禁。" },
+      { "title": "MCP 集成", "desc": "Claude Code 直接读取项目状态，所有牛牛上下文可访问。" }
+    ]
+  },
+  "screenshot": {
+    "alt": "牛牛控制台截图",
+    "caption": "一个工作站，统一调度多个 AI Agent 会话。"
+  },
+  "bottom_cta": {
+    "headline": "准备好开始了吗？",
+    "subhead": "下载桌面版，或了解团队私有版。",
+    "primary": "下载",
+    "secondary": "阅读文档 →"
+  },
+  "footer": {
+    "product": "产品",
+    "docs": "文档",
+    "resources": "资源",
+    "about": "关于",
+    "copyright": "© 2026 牛牛 Niuniu. 保留所有权利。",
+    "icp": ""
+  },
+  "pricing": {
+    "page_title": "定价",
+    "page_subtitle": "选择最适合你的部署方式。",
+    "tiers": {
+      "personal": { "name": "Personal", "price_label": "免费", "cta": "下载" },
+      "self_hosted": { "name": "团队私有版", "price_label": "年度许可", "cta": "联系销售" }
+    },
+    "comparison_title": "功能对比",
+    "faq_title": "常见问题"
+  },
+  "changelog": {
+    "page_title": "更新日志",
+    "subtitle": "桌面 app 每个版本的发布说明，按时间倒序。",
+    "netdisk_title": "百度网盘下载",
+    "netdisk_desc": "国内用户可通过百度网盘下载安装包（GitHub 下载较慢时推荐）。",
+    "netdisk_cta": "打开百度网盘",
+    "empty": "尚无正式发布版本。",
+    "fetch_error": "获取 release 失败",
+    "view_on_github": "在 GitHub 上查看全部发布 →"
+  },
+  "docs": {
+    "edit_on_github": "在 GitHub 上编辑此页",
+    "prev": "上一篇",
+    "next": "下一篇",
+    "on_this_page": "本页大纲",
+    "search_placeholder": "搜索文档..."
+  },
+  "groups": {
+    "intro": "入门",
+    "install": "安装",
+    "concepts": "核心概念",
+    "guides": "使用指南",
+    "faq": "故障排查"
+  },
+  "404": {
+    "title": "页面未找到",
+    "subtitle": "你访问的页面不存在或已被移动。",
+    "back": "返回首页"
+  }
+}

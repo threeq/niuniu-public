@@ -1,0 +1,51 @@
+---
+title: "Kanban & Issues"
+description: "Project board, issues, checklists, comments, timeline."
+group: guides
+order: 1
+---
+
+Kanban is Niuniu's built-in project management tool for tracking what needs to be done, where things stand, and who's responsible.
+
+## Create a project
+
+**Projects** → **+ New Project** → enter a name and optionally attach repositories (you can add them later).
+
+New projects come with four default columns: **To Do** / **In Progress** / **Review** / **Done**. Customize them under **Settings → Columns**.
+
+## Create an issue
+
+Click **+ Issue** in any column → enter a title and description (Markdown supported).
+
+Each issue can have:
+
+- **Checklist**: a list of sub-tasks with checkboxes
+- **Comment**: discussion threads
+- **Timeline**: automatically records events such as "created / moved / workspace linked / review submitted"
+
+## Drag issues between columns
+
+Drag an issue card to its target column — status changes sync instantly.
+
+## Launch a workspace from an issue
+
+Open the issue detail, then click **+ Workspace** in the right sidebar:
+
+- Niuniu creates a worktree based on the repositories attached to the issue
+- You're automatically redirected to the workspace detail page
+- The workspace and issue are linked bidirectionally — completing the workspace moves the issue to Done
+
+## Execution Plan
+
+Group multiple issues across projects into an ordered execution plan, for example:
+
+1. Add backend API
+2. Wire up the frontend UI
+3. Write documentation
+
+Niuniu launches workspaces in order, starting the next one only when the previous one finishes. See the **Execution Plans** tab for details.
+
+## Next steps
+
+- [Workspace & agent chat](/docs/guides/agent)
+- [Git worktree & code review](/docs/guides/worktree)

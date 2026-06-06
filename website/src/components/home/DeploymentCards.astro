@@ -1,0 +1,55 @@
+---
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+import zh from '@/i18n/zh.json';
+import en from '@/i18n/en.json';
+import Button from '@/components/ui/Button.astro';
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const dict = locale === 'zh' ? zh : en;
+
+const cards = [
+  {
+    key: 'personal',
+    icon: '🖥',
+    title: dict.deploy.personal.title,
+    subtitle: dict.deploy.personal.subtitle,
+    cta: dict.deploy.personal.cta,
+    href: 'https://github.com/threeq/niuniu-public/releases',
+    features: dict.deploy.personal.features as string[],
+  },
+  {
+    key: 'self_hosted',
+    icon: '🐳',
+    title: dict.deploy.self_hosted.title,
+    subtitle: dict.deploy.self_hosted.subtitle,
+    cta: dict.deploy.self_hosted.cta,
+    href: localePath(locale, '/docs/install/self-hosted'),
+    features: dict.deploy.self_hosted.features as string[],
+  },
+];
+---
+<section class="container-page py-20">
+  <div class="text-center max-w-2xl mx-auto">
+    <h2 class="text-3xl font-bold">{t(locale, 'deploy.section_title')}</h2>
+    <p class="mt-3 text-[rgb(var(--color-muted))]">{t(locale, 'deploy.section_subtitle')}</p>
+  </div>
+  <div class="mt-12 grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    {cards.map((c) => (
+      <div class="rounded-xl border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] p-6 flex flex-col">
+        <div class="text-3xl">{c.icon}</div>
+        <h3 class="mt-4 text-xl font-semibold">{c.title}</h3>
+        <p class="mt-1 text-sm text-[rgb(var(--color-muted))]">{c.subtitle}</p>
+        <ul class="mt-5 space-y-2 text-sm">
+          {c.features.map((f) => (
+            <li class="flex items-start gap-2">
+              <span class="text-[rgb(var(--color-primary))] mt-0.5">✓</span>
+              <span>{f}</span>
+            </li>
+          ))}
+        </ul>
+        <div class="mt-6 pt-4 border-t border-[rgb(var(--color-border))]">
+          <Button href={c.href} variant="secondary" class="w-full">{c.cta} →</Button>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>

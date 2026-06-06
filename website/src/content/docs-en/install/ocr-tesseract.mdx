@@ -1,0 +1,123 @@
+---
+title: "Install Tesseract OCR"
+description: "Install Tesseract for niuniu's Reading Acceleration (OCR): per-platform steps for macOS / Linux / Windows, language packs, and how to verify."
+group: install
+order: 4
+---
+
+niuniu's **Reading Acceleration** uses [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) locally to turn text inside screenshots, scans, and images into searchable text. It all runs on your own machine — images are never uploaded.
+
+Tesseract is a **standalone system program** and is not bundled with niuniu. If it isn't installed, niuniu shows an "OCR engine not found" notice and sends you here. Follow the section for your operating system below — it usually takes 1–2 minutes.
+
+> You only need to install it once. After that niuniu auto-detects the `tesseract` command; no reboot required.
+
+## 1. Install by platform
+
+### macOS
+
+The easiest path is [Homebrew](https://brew.sh):
+
+```bash
+brew install tesseract
+```
+
+This installs the Tesseract engine with English (`eng`) and orientation-detection (`osd`) data included. To recognize Chinese or other languages, add the full language pack:
+
+```bash
+brew install tesseract-lang
+```
+
+> No Homebrew yet? Run the official one-line installer first — `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"` — then come back and run the commands above.
+
+### Linux
+
+**Debian / Ubuntu family:**
+
+```bash
+sudo apt update
+sudo apt install -y tesseract-ocr
+# Language packs: Simplified + Traditional Chinese (English eng ships with the core package)
+sudo apt install -y tesseract-ocr-chi-sim tesseract-ocr-chi-tra
+```
+
+**Fedora / RHEL / Alibaba Linux family:**
+
+```bash
+sudo dnf install -y tesseract
+sudo dnf install -y tesseract-langpack-chi_sim tesseract-langpack-chi_tra
+```
+
+**Arch / Manjaro:**
+
+```bash
+sudo pacman -S tesseract tesseract-data-eng tesseract-data-chi_sim tesseract-data-chi_tra
+```
+
+> Kylin / UOS and similar domestic distros are usually Debian- or RHEL-derived — use the matching command group; the package names are the same.
+
+### Windows
+
+Windows has no official installer; the community-maintained **UB Mannheim** build is the de-facto standard:
+
+1. Open the [UB Mannheim Tesseract download page](https://github.com/UB-Mannheim/tesseract/wiki) and download the latest `tesseract-ocr-w64-setup-*.exe` (64-bit).
+2. Run the installer. At the **"Additional language data"** step, tick the languages you need — at minimum **Chinese (Simplified)** and **Chinese (Traditional)**; English is included by default.
+3. Keep the default install path `C:\Program Files\Tesseract-OCR`.
+4. **Important**: on the **"Select Additional Tasks"** step, enable **"Add to PATH"**. If the installer doesn't offer it, manually add `C:\Program Files\Tesseract-OCR` to your system `Path` afterward.
+
+When it finishes, open a **new** PowerShell window (so the updated PATH takes effect) before running the verification below.
+
+## 2. Language packs
+
+Tesseract's recognition is driven by **language data files** (`*.traineddata`), one per language:
+
+| Language | Data code |
+|---|---|
+| English | `eng` |
+| Simplified Chinese | `chi_sim` |
+| Traditional Chinese | `chi_tra` |
+| Orientation / script detection | `osd` |
+
+- If you installed only the engine without a Chinese pack, Chinese recognition will fail or come out garbled — be sure to add `chi_sim` (and `chi_tra` if needed) using the command for your OS above.
+- Language data lives in Tesseract's `tessdata` directory by default. If you put the data elsewhere, point the `TESSDATA_PREFIX` environment variable at that directory.
+
+## 3. Verify the install
+
+Open a terminal (on Windows, the freshly opened PowerShell) and confirm it works:
+
+```bash
+tesseract --version
+```
+
+A version line like `tesseract v5.x.x` means the engine is ready. Now check the language packs:
+
+```bash
+tesseract --list-langs
+```
+
+The output should include `eng`, `chi_sim` (and `chi_tra` if you installed it). When all of them appear, you're set.
+
+> **Version requirement**: Tesseract **4.0 or newer** is recommended (5.x is best). Older Linux distro repos may ship 3.x, whose accuracy is much worse — prefer the commands above to get a current build.
+
+## 4. Back in niuniu
+
+Once the dependency is installed:
+
+1. Return to niuniu and **trigger Reading Acceleration / OCR again** (or click "Re-check" wherever the "OCR engine not found" notice appeared).
+2. niuniu re-detects the `tesseract` command on your system; once found, recognition works.
+3. If it still says not installed, the cause is almost always **PATH not taking effect** — fully quit niuniu and your terminal, reopen them, and try again.
+
+## 5. Troubleshooting
+
+**Installed it, but niuniu still says it's missing?**
+Almost always `tesseract` isn't on your `PATH`. Run `tesseract --version` in a terminal: if the terminal also reports "command not found," PATH isn't set up (on Windows, double-check the "Add to PATH" step). Reinstall or add the PATH manually per your OS section.
+
+**Chinese comes out blank or garbled?**
+The Chinese language pack is missing. Run `tesseract --list-langs` to check for `chi_sim`; if it's absent, add the language pack from your OS section.
+
+**`--list-langs` finds no languages at all?**
+The language-data directory is wrong. Point the `TESSDATA_PREFIX` environment variable at the `tessdata` directory that actually holds your `*.traineddata` files.
+
+## Next steps
+
+- [Install Personal desktop](/en/docs/install/personal) — installing niuniu itself and its dependencies
+- [FAQ](/en/docs/faq) — other dependencies and troubleshooting

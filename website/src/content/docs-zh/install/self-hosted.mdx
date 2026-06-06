@@ -1,0 +1,376 @@
+---
+title: Self-Hosted 自部署
+description: 提供 Docker Compose 与本地裸机两套部署方案，含 PostgreSQL、Caddy 反代、systemd 配置与首次管理员设置。
+group: install
+order: 3
+---
+
+Self-Hosted 适合需要私有化、合规、内网部署的团队。底层用 PostgreSQL，支持任意用户数。
+
+我们提供两种部署形态，二选一即可：
+
+| 方案 | 适合场景 | 优点 | 复杂度 |
+|---|---|---|---|
+| **A. Docker Compose** | 标准生产环境、内网服务器 | 一条命令拉起完整栈（DB + server + Caddy），升级回滚简单 | ★☆☆ |
+| **B. 本地裸机** | 已有 PostgreSQL、需细粒度系统集成、离线/麒麟/统信等无 Docker 环境 | 资源占用更低，与现有 systemd / Nginx / 内网证书无缝集成 | ★★☆ |
+
+两种方案的应用层架构完全一致：一个 `niuniu-server` 进程 + 一个 PostgreSQL 数据库 + 一个反向代理。区别只在打包形式。
+
+## 公共前置条件
+
+- Linux 服务器（Ubuntu 22.04+ / Debian 12+ / RHEL 9+ / Alibaba Linux 3 等）
+- 至少 2 vCPU / 4 GB RAM / 20 GB 磁盘
+- 一个绑定到该服务器的域名（用于 HTTPS）
+- 出站访问 Anthropic API（或你选定的三方端点）
+
+---
+
+## 方案 A：Docker Compose 部署
+
+### A.1 前置依赖
+
+- Docker 24+ 与 Docker Compose v2
+
+```bash
+# Ubuntu / Debian 一键安装
+curl -fsSL https://get.docker.com | sh
+sudo systemctl enable --now docker
+```
+
+### A.2 下载部署模板
+
+```bash
+git clone https://github.com/niuniu-dev/niuniu.git
+cd niuniu/relay/deploy
+cp server.yaml.example server.yaml
+```
+
+编辑 `server.yaml`，把两个占位符替换成实际值：
+
+```yaml
+server:
+  host: 0.0.0.0
+  port: 3000
+
+storage:
+  driver: postgres
+  postgres:
+    dsn: "postgres://niuniu:你的强密码@postgres:5432/niuniu_server?sslmode=disable"
+
+auth:
+  enabled: true
+  token_expiry: 15m
+  refresh_expiry: 168h
+  users:
+    - username: admin
+      password: 你的管理员密码
+      display_name: Admin
+      role: admin
+
+agent:
+  default: claude-code
+  claude_code:
+    command: claude
+    args: []
+
+workspace:
+  base_dir: /data/.niuniu/workspaces
+
+harness:
+  enabled: true
+```
+
+> 容器内 `HOME=/data`，workspace 默认落在 `/data/.niuniu/workspaces`，通过 `server-data` 卷持久化。
+
+### A.3 准备环境变量
+
+`relay/deploy/` 下创建 `.env`：
+
+```bash
+POSTGRES_PASSWORD=与 server.yaml DSN 中保持一致的强密码
+TEAM_DOMAIN=team.example.com
+RELAY_DOMAIN=relay.example.com   # 若不部署 relay 可留空
+DEMO_DOMAIN=                     # 一般留空
+WEBSITE_DOMAIN=                  # 一般留空
+WEBSITE_APEX_DOMAIN=
+```
+
+### A.4 启动栈
+
+```bash
+docker compose up -d postgres niuniu-server caddy
+```
+
+第一次启动会自动初始化 PostgreSQL（创建 `niuniu_server` 数据库）与 server schema。
+
+### A.5 Caddy 反向代理
+
+`Caddyfile`（仓库已附示例）：
+
+```caddy
+{$TEAM_DOMAIN} {
+    reverse_proxy niuniu-server:3000
+}
+```
+
+Caddy 会自动向 Let's Encrypt 申请 HTTPS 证书。如果你已有内网 CA，把 `tls /path/to/cert.pem /path/to/key.pem` 写进对应 site 块即可。
+
+### A.6 验证
+
+```bash
+curl -I https://team.example.com/api/health
+# 期望：HTTP/2 200
+```
+
+浏览器访问 `https://team.example.com`，用 `admin` + 你设置的密码登录。
+
+---
+
+## 方案 B：本地裸机部署
+
+### B.1 安装运行时依赖
+
+niuniu-server 启动后会作为子进程拉起 `git` / `node` / `python3` / `claude` 等 CLI，必须先在服务器上装好：
+
+```bash
+# Debian / Ubuntu 示例
+sudo apt update
+sudo apt install -y git curl ca-certificates python3 postgresql
+
+# Node.js 20 LTS
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Claude Code 与 Codex CLI（任选其一或都装）
+sudo npm install -g @anthropic-ai/claude-code @openai/codex
+```
+
+RHEL / 麒麟 / 统信等系统把 `apt` 换成 `dnf` / `yum` 即可，包名一致。
+
+### B.2 创建 PostgreSQL 数据库
+
+```bash
+sudo -u postgres psql <<'SQL'
+CREATE USER niuniu WITH PASSWORD '你的强密码';
+CREATE DATABASE niuniu_server OWNER niuniu;
+GRANT ALL PRIVILEGES ON DATABASE niuniu_server TO niuniu;
+SQL
+```
+
+如果数据库在另一台机器上，确保 `pg_hba.conf` 放行 server 所在网段，并把下面 DSN 里的 `localhost` 换掉。
+
+### B.3 获取 niuniu-server 二进制
+
+**选项 1：直接下载预编译包**（推荐）
+
+到 [GitHub Releases](https://github.com/threeq/niuniu-public/releases) 下载对应平台的 `niuniu-server-<版本>-linux-<arch>`，重命名为 `niuniu-server` 并放到 `/usr/local/bin/`：
+
+```bash
+sudo install -m 0755 niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
+```
+
+**选项 2：自行构建**
+
+需要 Go 1.25+ 与 pnpm 9+：
+
+```bash
+git clone https://github.com/niuniu-dev/niuniu.git
+cd niuniu
+make build-linux
+sudo install -m 0755 bin/niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
+```
+
+### B.4 创建系统用户与目录
+
+```bash
+sudo useradd --system --home /var/lib/niuniu --create-home --shell /usr/sbin/nologin niuniu
+sudo mkdir -p /etc/niuniu /var/lib/niuniu/.niuniu/workspaces
+sudo chown -R niuniu:niuniu /var/lib/niuniu
+```
+
+### B.5 编写配置
+
+`/etc/niuniu/config.yaml`：
+
+```yaml
+server:
+  host: 0.0.0.0
+  port: 3000
+
+storage:
+  driver: postgres
+  postgres:
+    dsn: "postgres://niuniu:你的强密码@localhost:5432/niuniu_server?sslmode=disable"
+
+auth:
+  enabled: true
+  token_expiry: 15m
+  refresh_expiry: 168h
+  users:
+    - username: admin
+      password: 你的管理员密码
+      display_name: Admin
+      role: admin
+
+agent:
+  default: claude-code
+  claude_code:
+    command: claude
+    args: []
+
+workspace:
+  base_dir: /var/lib/niuniu/.niuniu/workspaces
+
+harness:
+  enabled: true
+```
+
+```bash
+sudo chown niuniu:niuniu /etc/niuniu/config.yaml
+sudo chmod 0640 /etc/niuniu/config.yaml
+```
+
+### B.6 systemd 服务单元
+
+`/etc/systemd/system/niuniu-server.service`：
+
+```ini
+[Unit]
+Description=Niuniu Team Server
+Documentation=https://github.com/niuniu-dev/niuniu
+After=network-online.target postgresql.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=niuniu
+Group=niuniu
+Environment=HOME=/var/lib/niuniu
+ExecStart=/usr/local/bin/niuniu-server --config /etc/niuniu/config.yaml
+Restart=on-failure
+RestartSec=5s
+WorkingDirectory=/var/lib/niuniu
+LimitNOFILE=65536
+ProtectSystem=strict
+ProtectHome=read-only
+ReadWritePaths=/var/lib/niuniu
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
+```
+
+启动：
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now niuniu-server
+sudo systemctl status niuniu-server
+journalctl -u niuniu-server -f      # 实时日志
+```
+
+> 注意 `Environment=HOME=/var/lib/niuniu` —— `claude` CLI 把 OAuth 凭证存到 `$HOME/.claude/`，必须与 systemd User 匹配的真实目录一致，否则 agent 启动后无法登录模型。
+
+### B.7 反向代理（Caddy 示例）
+
+```bash
+sudo apt install -y caddy
+```
+
+`/etc/caddy/Caddyfile`：
+
+```caddy
+team.example.com {
+    reverse_proxy localhost:3000
+}
+```
+
+```bash
+sudo systemctl reload caddy
+```
+
+Nginx 用户用下面这段平替（注意 WebSocket / SSE 必须 `proxy_http_version 1.1` + `Upgrade` 头）：
+
+```nginx
+server {
+    listen 443 ssl http2;
+    server_name team.example.com;
+
+    ssl_certificate     /etc/letsencrypt/live/team.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/team.example.com/privkey.pem;
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_read_timeout 3600s;
+        proxy_send_timeout 3600s;
+    }
+}
+```
+
+### B.8 验证
+
+```bash
+curl -I https://team.example.com/api/health
+# 期望：HTTP/2 200
+```
+
+浏览器访问 `https://team.example.com`，用 `admin` + 你设置的密码登录。
+
+---
+
+## 首次管理员
+
+两套方案首次登录都用 `server.yaml` / `config.yaml` 里 `auth.users` 配置的 admin 账号。登录后请立即：
+
+1. 到 **设置 → 用户** 把 admin 密码改成新值并写回配置文件，避免明文密码长期暴露
+2. 新建普通成员账号，把 admin 用于运维管理而非日常开发
+3. （可选）开启 MFA：**设置 → 用户 → 安全** 里启用 TOTP
+
+## 备份
+
+PostgreSQL 数据是最关键的资产，建议每周一次 `pg_dump`：
+
+```bash
+# Docker Compose 方案
+docker compose exec postgres pg_dump -U niuniu niuniu_server | gzip > backup-$(date +%F).sql.gz
+
+# 本地裸机方案
+sudo -u postgres pg_dump niuniu_server | gzip > backup-$(date +%F).sql.gz
+```
+
+workspace 工作树（Docker：`server-data` 卷 / 裸机：`/var/lib/niuniu/.niuniu/`）也建议进同一份增量备份。保留 4~8 周。
+
+## 升级
+
+**Docker Compose 方案**：
+
+```bash
+cd niuniu/relay/deploy
+git pull
+docker compose pull
+docker compose up -d --force-recreate niuniu-server
+```
+
+**本地裸机方案**：
+
+```bash
+# 下载新版本二进制（或重新 make build-linux）
+sudo systemctl stop niuniu-server
+sudo install -m 0755 niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
+sudo systemctl start niuniu-server
+journalctl -u niuniu-server -f
+```
+
+升级前请务必备份数据库。schema 迁移在服务启动时自动执行，迁移失败会保留旧 schema 不破坏数据。
+
+## 下一步
+
+- [核心概念](/docs/concepts) 帮你理解组织、成员、资源所有权
+- [5 分钟快速上手](/docs/quickstart) 跑通第一个 workspace

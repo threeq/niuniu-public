@@ -1,0 +1,42 @@
+---
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const groups = [
+  { title: t(locale, 'footer.product'), links: [
+    { label: t(locale, 'deploy.personal.title'), href: 'https://github.com/threeq/niuniu-public/releases' },
+    { label: t(locale, 'deploy.self_hosted.title'), href: localePath(locale, '/docs/install/self-hosted') },
+  ]},
+  { title: t(locale, 'footer.docs'), links: [
+    { label: t(locale, 'groups.intro'), href: localePath(locale, '/docs/intro') },
+    { label: t(locale, 'groups.concepts'), href: localePath(locale, '/docs/concepts') },
+    { label: t(locale, 'groups.guides'), href: localePath(locale, '/docs/guides/kanban') },
+    { label: t(locale, 'groups.faq'), href: localePath(locale, '/docs/faq') },
+  ]},
+  { title: t(locale, 'footer.resources'), links: [
+    { label: t(locale, 'nav.github'), href: 'https://github.com/threeq/niuniu-public' },
+    { label: 'Releases', href: 'https://github.com/threeq/niuniu-public/releases' },
+    { label: t(locale, 'nav.changelog'), href: localePath(locale, '/changelog') },
+  ]},
+  { title: t(locale, 'footer.about'), links: [
+    { label: t(locale, 'nav.pricing'), href: localePath(locale, '/pricing') },
+  ]},
+];
+---
+<footer class="border-t border-[rgb(var(--color-border))] mt-24 py-12">
+  <div class="container-doc grid grid-cols-2 md:grid-cols-4 gap-8 text-sm">
+    {groups.map((g) => (
+      <div>
+        <h3 class="font-semibold mb-3">{g.title}</h3>
+        <ul class="space-y-2 text-[rgb(var(--color-muted))]">
+          {g.links.map((l) => (
+            <li><a href={l.href} class="hover:text-[rgb(var(--color-fg))]">{l.label}</a></li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+  <div class="container-doc mt-8 pt-6 border-t border-[rgb(var(--color-border))] text-xs text-[rgb(var(--color-muted))] flex flex-wrap items-center justify-between gap-2">
+    <span>{t(locale, 'footer.copyright')}</span>
+    <span>{t(locale, 'footer.icp')}</span>
+  </div>
+</footer>

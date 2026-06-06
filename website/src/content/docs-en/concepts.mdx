@@ -1,0 +1,102 @@
+---
+title: "Core concepts"
+description: "Owner / User / Org / Repository / Project / Workspace / Agent / Scene / Harness — the eight concepts."
+group: concepts
+order: 1
+---
+
+Niuniu organizes everything around eight core concepts. Once you understand these eight, the whole product makes sense.
+
+## Owner
+
+Every top-level resource has an owner — either a user (personal space) or an org (organization space). This is the foundation of multi-tenancy: user A cannot see user B's resources; org A cannot see org B's resources.
+
+## User & Org
+
+- **User**: a registered account. Every user automatically gets a personal space.
+- **Org**: an organization. A user can belong to multiple orgs; each org has three roles: owner / admin / member.
+
+## Repository
+
+Represents a git repository — either a local path or a git URL. Once registered with Niuniu, Niuniu manages its worktrees and branch metadata.
+
+## Project
+
+A Project is a **Kanban board** containing Issues, Columns, Checklists, and Comments. A Project can have zero or more Repositories attached to it.
+
+## Workspace
+
+The central concept. A workspace = **the execution environment for one issue**:
+
+- Tied to one issue (a task inside a project)
+- Automatically creates an isolated git worktree for each attached repository
+- Has its own shell environment, agent session, and file tree
+
+Workspaces are fully isolated from each other — code changes in workspace A don't bleed into workspace B.
+
+## Agent
+
+An agent is the Claude Code instance running inside a workspace. Niuniu offers two integration paths:
+
+- **PTY terminal**: spawns the `claude` CLI as a child process and bridges its I/O to the browser over a pseudo-terminal
+- **Structured agent**: drives the `claude` CLI as a structured chat session, persisting messages, cost, and session state to the database
+
+## Scene
+
+A Scene is a **curated bundle of MCP servers and Claude plugins** that determines which tools the agent has access to when a workspace starts up.
+
+Different tasks need different tool sets — frontend debugging needs the Chrome DevTools MCP, doc writing needs context7 lookup, UI design needs Pencil. Packaging these combinations into named Scenes lets you pick one when you create a workspace, instead of hand-editing `.mcp.json` and `~/.claude/` every time.
+
+How it works:
+
+- **Preset scenes**: Niuniu ships built-in scenes (general development / frontend debugging / doc writing / UI design, …); you can also create your own.
+- **Activation**: a workspace starts with the Project's *default scene*; the workspace toolbar can override it per workspace.
+- **Projection**: when the agent starts, Niuniu materializes the active Scene into the worktree — writing `.mcp.json` and laying down plugin files in the `~/.claude/` overlay directory. The materialized state is recorded per workspace, so swapping Scenes cleans up the old projection before writing the new one.
+- **Plugin installs are explicit**: picking a Scene does **not** auto-download anything; if a referenced plugin isn't installed locally yet, the UI flags it and waits for you to confirm.
+
+Scenes are owner-scoped (each user's personal space and each org keep their own), sibling-level with Repositories / Projects / Harness Specs.
+
+## Harness (engineering standards)
+
+Harness is Niuniu's **engineering-standards pipeline** — it turns rules like "lint must pass before commit", "tests must stay green", "commit messages follow Conventional Commits", and "no secrets in the diff" into executable checks, so every agent output gets vetted automatically before it lands on the main branch.
+
+A Harness has two layers:
+
+- **Spec (the rule set)**: an owner-scoped template that lists the checks to run. Each check has a `Kind`, the common ones being:
+  - Generic executors — `shell` (run a custom command), `lint`, `test`, `build`, etc. A non-zero exit code is a failure
+  - `ai_judge` — hands the diff / files / prompt to a Claude judge that scores against the criteria you wrote
+  - Each check carries a `severity`: `error` **blocks workflow phase transitions**, `warning` only annotates
+- **Run (one execution)**: a triggered spec produces a run, which is broken into checks, which expand into jobs (concrete sub-tasks / commands). All agent messages, costs, and tasks during the run are tagged with `harness_run_id` — **the whole pipeline is observable end to end**.
+
+Three trigger types are supported:
+
+1. **`pre_commit`** — invoked by the agent through an MCP tool right before a commit.
+2. **`on_schedule`** — run on a cron schedule inside a workspace (e.g. nightly full-test).
+3. **Phase-attached** — attached to a workflow (kanban column transition); the next phase is gated until checks pass.
+
+In the product, Harness lives at the top-level **Engineering standards** nav. Specs follow ownership (each user's personal space and each org keep their own); when a workspace fires a run, the spec is resolved by `(owner_type, owner_id)`.
+
+> Tip: the Personal desktop edition ships the same Harness engine in `~/.niuniu/` — solo developers can also use it to chain "tests + lint + AI review" into a pre-commit self-check.
+
+## Relationship diagram
+
+```
+User / Org (Owner)
+  ├─ Project
+  │    ├─ Issue
+  │    │    └─ Workspace
+  │    │         ├─ Worktree (per repo)
+  │    │         ├─ Agent
+  │    │         ├─ Active Scene → .mcp.json + ~/.claude overlay
+  │    │         └─ Harness Run → Check → Job
+  │    ├─ Default Scene
+  │    └─ Repository (attached)
+  ├─ Scene (owned by user / org)
+  └─ Harness Spec (owned by user / org)
+```
+
+## Next steps
+
+- [Kanban & Issues](/docs/guides/kanban) — how to use the Project board
+- [Workspace & agent chat](/docs/guides/agent) — chatting with an agent inside a workspace
+- [Git worktree & code review](/docs/guides/worktree) — how multiple workspaces share a single repository

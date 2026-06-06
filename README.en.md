@@ -2,9 +2,9 @@
 
 > [中文](./README.md) | English
 
-The public-facing repository for **Niuniu** — used to publish desktop releases,
-track issues, and collect community feedback. The project source lives in a
-private repository; **no code lives here**.
+The public repository for **Niuniu** — contains the official website source,
+desktop app releases, issue tracking, and community feedback.
+The application source lives in a private repository.
 
 ## Links
 
@@ -30,6 +30,24 @@ back to you when they're actually blocked. See the
   publicly — email the maintainer via the contact info on the website.
 - When filing a bug, include the desktop app version, OS, and reproduction
   steps; the templates will walk you through it.
+
+## Official Website
+
+The website source lives in the [`website/`](./website/) directory of this
+repo, built with [Astro](https://astro.build/) and deployed to
+[www.niu6ai.com](https://www.niu6ai.com/en).
+
+Local development:
+
+```bash
+cd website && pnpm install && pnpm dev
+```
+
+Deploy to production:
+
+```bash
+bash deploy.sh
+```
 
 ## License
 

@@ -1,0 +1,31 @@
+---
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+import LangSwitch from './LangSwitch.astro';
+import ThemeToggle from './ThemeToggle.tsx';
+import SearchDialog from '@/components/ui/SearchDialog.tsx';
+const locale: Locale = getLocaleFromUrl(Astro.url);
+---
+<header class="sticky top-0 z-40 border-b border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg))]/80 backdrop-blur supports-[backdrop-filter]:bg-[rgb(var(--color-bg))]/60">
+  <div class="container-doc flex h-14 items-center gap-6">
+    <a href={localePath(locale, '/')} class="flex items-center gap-2 font-bold" aria-label={t(locale, 'brand.name')}>
+      <img src="/favicon.svg" alt="" class="h-7 w-7 dark:hidden" aria-hidden="true" />
+      <img src="/favicon-dark.svg" alt="" class="h-7 w-7 hidden dark:block" aria-hidden="true" />
+      <span>{t(locale, 'brand.name')}</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-5 text-sm">
+      <a href={localePath(locale, '/docs')} class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.docs')}</a>
+      <a href={localePath(locale, '/pricing')} class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.pricing')}</a>
+      <a href={localePath(locale, '/changelog')} class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.changelog')}</a>
+      <a href="https://github.com/threeq/niuniu-public" rel="noopener noreferrer" class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.github')}</a>
+    </nav>
+    <div class="ml-auto flex items-center gap-1">
+      <button id="open-search" type="button" class="hidden sm:inline-flex items-center gap-2 h-9 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 text-sm text-[rgb(var(--color-muted))] hover:bg-[rgb(var(--color-bg))]" aria-label={t(locale, 'nav.search')}>
+        <span>{t(locale, 'nav.search')}</span>
+        <kbd class="rounded bg-[rgb(var(--color-bg))] px-1.5 text-xs">⌘K</kbd>
+      </button>
+      <ThemeToggle client:load label={t(locale, 'nav.theme')} />
+      <LangSwitch />
+    </div>
+  </div>
+</header>
+<SearchDialog client:load locale={locale} placeholder={t(locale, 'docs.search_placeholder')} />

@@ -1,0 +1,51 @@
+---
+title: Kanban 与 Issue
+description: 项目看板、Issue、Checklist、Comment、Timeline。
+group: guides
+order: 1
+---
+
+Kanban 是牛牛内置的项目管理工具，用来跟踪要做什么、进度到哪了、谁在负责。
+
+## 创建项目
+
+**Projects** → **+ 新建项目** → 填名称、关联仓库（可选，可以后续添加）。
+
+新建项目自带四列：**To Do** / **In Progress** / **Review** / **Done**。可以在 **设置 → 列** 里自定义。
+
+## 创建 Issue
+
+任意列的 **+ Issue** → 填标题、描述（支持 Markdown）。
+
+每个 issue 可以追加：
+
+- **Checklist**：子任务列表，可勾选完成
+- **Comment**：讨论留言
+- **Timeline**：自动记录"创建 / 移动 / 关联 workspace / 提交评审"等事件
+
+## 拖拽移动 Issue
+
+直接拖拽 issue 卡片到目标列，状态变更即时同步。
+
+## 从 Issue 启动 Workspace
+
+进入 issue 详情，右侧栏点 **+ Workspace**：
+
+- 牛牛会基于 issue 关联的 repository 创建 worktree
+- 自动跳转到 workspace 详情页
+- workspace 与 issue 双向关联，状态联动（workspace 完成 → issue 移到 Done）
+
+## Execution Plan（执行计划）
+
+把多个 issue 跨项目编成有顺序的执行计划，比如：
+
+1. 后端加 API
+2. 前端 wire UI
+3. 写文档
+
+牛牛会按顺序帮你启动 workspace、跑完一个再启下一个。详见 **执行计划** 标签。
+
+## 下一步
+
+- [Workspace 与 Agent 对话](/docs/guides/agent)
+- [Git Worktree 与代码评审](/docs/guides/worktree)

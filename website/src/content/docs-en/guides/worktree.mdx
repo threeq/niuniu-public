@@ -1,0 +1,48 @@
+---
+title: "Git worktree & code review"
+description: "How workspace and worktree relate, diff viewer, inline comments to agent."
+group: guides
+order: 3
+---
+
+Niuniu gives each workspace its own isolated git worktree, so multiple workspaces can modify different branches of the same repository at the same time — **without interfering with each other**.
+
+## What is a worktree?
+
+git worktree is a native git feature that lets a single repository be checked out into multiple directories simultaneously. Each worktree shares the same `.git` object store but has its own working directory and HEAD.
+
+Niuniu creates worktrees at `~/.niuniu/<owner>/workspaces/<ws-id>/.worktrees/<repo>/`. Each workspace is initialized from the repository's `base_branch` (typically main).
+
+## Working on multiple branches at once
+
+For example:
+
+- Workspace A: based on main, branch `ws-1/main`, working on the backend
+- Workspace B: based on main, branch `ws-2/main`, working on the frontend
+
+The two workspaces have completely isolated git state — no risk of stashing or committing to the wrong branch.
+
+## Viewing diffs
+
+**Workspace → Diff tab**. Niuniu runs `git diff <base_branch>...HEAD` and renders the result as a GitHub-style side-by-side diff view.
+
+## Inline comments
+
+Select any line in the diff and click the **+** button to add a comment. Comments can be:
+
+- **Kept** as review notes (not sent anywhere)
+- **Sent to agent** — the comment is injected as input to the agent, instructing Claude to make the change
+
+This is Niuniu's core code review loop: **human reviews → agent fixes → review again**.
+
+## Completing a workspace
+
+When all changes have been reviewed and you're satisfied, click **Workspace → Complete**:
+
+- Niuniu pushes the branch to the upstream repository (if a remote is configured)
+- The linked issue is automatically moved to Done
+- The worktree is not deleted automatically (kept for reference); archive it manually under **Settings → Cleanup**
+
+## Next steps
+
+- [FAQ & troubleshooting](/docs/faq)

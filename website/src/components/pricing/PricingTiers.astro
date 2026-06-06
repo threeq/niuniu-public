@@ -1,0 +1,28 @@
+---
+import { getLocaleFromUrl, type Locale } from '@/lib/i18n';
+import zh from '@/i18n/zh.json';
+import en from '@/i18n/en.json';
+import Button from '@/components/ui/Button.astro';
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const dict = locale === 'zh' ? zh : en;
+const tiers = [
+  { ...dict.pricing.tiers.personal, key: 'personal', href: 'https://github.com/threeq/niuniu-public/releases', highlighted: false },
+  { ...dict.pricing.tiers.self_hosted, key: 'self_hosted', href: 'mailto:sales@niu6ai.com',                 highlighted: true  },
+];
+---
+<section class="container-page py-12">
+  <div class="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+    {tiers.map((tier) => (
+      <div class:list={[
+        'rounded-xl border p-6 flex flex-col',
+        tier.highlighted ? 'border-[rgb(var(--color-primary))] bg-[rgb(var(--color-card))] shadow-xl' : 'border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))]'
+      ]}>
+        <h3 class="text-xl font-semibold">{tier.name}</h3>
+        <div class="mt-2 text-3xl font-bold">{tier.price_label}</div>
+        <div class="mt-6 pt-4 border-t border-[rgb(var(--color-border))]">
+          <Button href={tier.href} variant={tier.highlighted ? 'primary' : 'secondary'} class="w-full">{tier.cta} →</Button>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
