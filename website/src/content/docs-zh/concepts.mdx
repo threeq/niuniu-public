@@ -1,0 +1,102 @@
+---
+title: 核心概念
+description: Owner / User / Org / Repository / Project / Workspace / Agent / Scene / Harness 八个概念关系图。
+group: concepts
+order: 1
+---
+
+牛牛用八个核心概念组织所有资源。理解了这八个概念，整个产品的导航就清晰了。
+
+## Owner（所有者）
+
+每个顶层资源都有一个 owner，要么是 user（个人空间），要么是 org（组织空间）。这是多租户的基础：A 用户的资源 B 用户看不到，A 组织的资源 B 组织看不到。
+
+## User & Org
+
+- **User**：注册账号。每个 user 自动有一个个人空间。
+- **Org**：组织。User 可以加入多个 Org，每个 Org 有 owner / admin / member 三种角色。
+
+## Repository（仓库）
+
+代表一个 git 仓库。可以是本地路径，也可以是 git URL。注册到牛牛后，牛牛会管理它的 worktree、分支信息。
+
+## Project（项目）
+
+一个 Project 是一块**看板**，里面有 Issues、Columns、Checklists、Comments。Project 关联零个或多个 Repository。
+
+## Workspace（工作区）
+
+最核心的概念。一个 workspace = **一个 issue 的执行环境**：
+
+- 关联一个 issue（项目里的某条任务）
+- 对每个关联的 repository，自动创建一个独立的 git worktree
+- 有自己的命令行环境、agent 会话、文件树
+
+多个 workspace 之间互相隔离——A workspace 改的代码不会影响 B workspace。
+
+## Agent（代理）
+
+agent 就是 workspace 内运行的 Claude Code 实例。牛牛提供两种集成路径：
+
+- **PTY 终端**：把 `claude` CLI 当子进程拉起，通过伪终端把输入输出桥接到浏览器
+- **结构化代理**：把 `claude` CLI 当对话 API 用，消息、cost、session 都持久化
+
+## Scene（场景）
+
+Scene 是一份**精选的 MCP 服务器 + Claude 插件包**，决定 workspace 启动时 agent 能用上哪些工具。
+
+不同任务需要不同工具集——前端调试需要 Chrome DevTools MCP，写文档需要 context7 文档检索，做 UI 设计需要 Pencil。把这些组合预先打包成 Scene，workspace 创建时选一个即可，避免每次手动配 `.mcp.json` 和 `~/.claude/`。
+
+工作机制：
+
+- **预设 Scene**：牛牛内置常用场景（通用开发 / 前端调试 / 文档撰写 / UI 设计等），你也可以新建自定义 Scene。
+- **激活方式**：默认走 Project 的 *default scene*；workspace 工具栏可以独立切换覆盖。
+- **物化（projection）**：workspace 启动 agent 时，牛牛把激活的 Scene 物化进 worktree 目录——写入 `.mcp.json`、在 `~/.claude/` 覆盖目录里铺好 plugin 文件。每个 workspace 的物化状态都留了记录，切换 Scene 时旧 projection 会先清理再写新的。
+- **插件安装由用户显式触发**：不会因为选了某个 Scene 就自动下载插件；如果该 Scene 引用了你本地还没装的插件，UI 会高亮"未安装"，你点确认后才会安装。
+
+Scene 是 owner 维度的资源（个人空间和组织各自维护），跟 Repository / Project / Harness Spec 平级。
+
+## Harness（工程规范）
+
+Harness 是牛牛的**工程规范流水线**——把"提交前必须 lint 通过"、"测试必须绿"、"commit 信息符合 Conventional Commits"、"diff 里不能出现密钥"这类规矩落成可执行的检查，让 agent 的产出在合入主干之前自动过一遍。
+
+一个 Harness 由两层构成：
+
+- **Spec（规范定义）**：owner 维度的"模板"，列出要跑哪些 check。每条 check 有自己的 `Kind`，常见有：
+  - 通用执行器：`shell`（跑自定义命令）、`lint`、`test`、`build` 等——退出码非 0 即视为失败
+  - `ai_judge`：把 diff / 文件 / 提示词交给一个 Claude judge，按你写的标准打分判定
+  - 每条 check 有 `severity`：`error` 会**阻塞工作流相位推进**，`warning` 只提示不阻塞
+- **Run（一次执行）**：spec 实际被触发后产生一次 run，run 拆成若干 check，每条 check 再展开成若干 job（具体的子任务/命令）。run 的所有 agent 消息、cost、任务都用 `harness_run_id` 标签关联，**整条流水线端到端可观测**。
+
+触发方式有三种：
+
+1. **`pre_commit`**：agent 通过 MCP 工具调起，commit 前自动跑。
+2. **`on_schedule`**：通过定时任务在 workspace 内定期跑（例如每天凌晨跑一次完整测试）。
+3. **相位附着**：挂在工作流（看板的 column 转移）上，进入下一阶段前必须通过。
+
+在产品里 Harness 是顶层导航的 **工程规范** 入口。Spec 跟着 owner 走（用户个人空间和组织各自维护），workspace 跑 run 时按 `(owner_type, owner_id)` 解析。
+
+> 提示：Personal 桌面版的 `~/.niuniu/` 也有同样的 Harness 引擎，单人开发同样可以用它把"测试 + lint + AI 评审"串成提交前自检。
+
+## 关系图
+
+```
+User / Org (Owner)
+  ├─ Project
+  │    ├─ Issue
+  │    │    └─ Workspace
+  │    │         ├─ Worktree (per repo)
+  │    │         ├─ Agent
+  │    │         ├─ Active Scene → .mcp.json + ~/.claude overlay
+  │    │         └─ Harness Run → Check → Job
+  │    ├─ Default Scene
+  │    └─ Repository (attached)
+  ├─ Scene (owned by user / org)
+  └─ Harness Spec (owned by user / org)
+```
+
+## 下一步
+
+- [Kanban 与 Issue](/docs/guides/kanban) — Project 的看板用法
+- [Workspace 与 Agent 对话](/docs/guides/agent) — 在 workspace 里和 agent 对话
+- [Git Worktree 与代码评审](/docs/guides/worktree) — 多 workspace 怎么共享一个仓库

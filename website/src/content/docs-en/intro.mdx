@@ -1,0 +1,26 @@
+---
+title: "Introduction"
+description: "What Niuniu is, what it solves, the two deployments at a glance."
+group: intro
+order: 1
+---
+
+Niuniu is a **goal-driven, local-first AI development workstation**: write the work down as issues, and a fleet of AI Agents plan, execute, and verify them in parallel — across projects, repositories, and agents — all from a single machine.
+
+## What problem it solves
+
+Traditional AI coding assistants work in a one-to-one chat model: one session, one task at a time, and you have to babysit each step. When you're juggling three projects and five open issues, the constant back-and-forth becomes the bottleneck.
+
+Niuniu raises the unit of work from "a chat" to "a goal." Each workspace maps to one issue and comes with its own isolated git worktree, its own Claude session, and its own shell environment. The agent autonomously closes the loop on that goal — only coming back to you when it's actually blocked. Multiple workspaces run in parallel without interfering with each other.
+
+## Two deployment options
+
+- **Personal** — a desktop app that runs entirely on your local machine, distributed as a single binary for all three platforms.
+- **Self-Hosted Team** — deploy via docker compose on your own infrastructure, backed by PostgreSQL, with fully private data, organizations, members, and audit logs.
+
+For installation details, see the [Install guide](/docs/install/personal).
+
+## Next steps
+
+- Try the [5-minute quickstart](/docs/quickstart) — get your first workspace running end to end.
+- Read [Core concepts](/docs/concepts) — understand how Project / Repository / Workspace / Agent relate to each other.

@@ -1,0 +1,122 @@
+{
+  "brand": {
+    "name": "Niuniu"
+  },
+  "site": {
+    "title": "Niuniu — Goal-driven parallel AI dev workstation",
+    "description": "Write down a goal — many AI Agents plan, execute, and verify it for you, in parallel, across projects and repositories. Local-first."
+  },
+  "nav": {
+    "docs": "Docs",
+    "pricing": "Pricing",
+    "changelog": "Changelog",
+    "github": "GitHub",
+    "search": "Search",
+    "theme": "Theme",
+    "lang": "Language",
+    "download": "Download"
+  },
+  "hero": {
+    "headline": "Set the goal. Agents finish it.",
+    "subhead": "Niuniu is a local-first AI dev workstation: write the work as issues, and many AI Agents plan, execute, and verify in parallel across projects and repositories — only coming back to you when they're truly blocked.",
+    "cta_primary": "Download Personal",
+    "cta_secondary": "View Self-Hosted Team →",
+    "dashboard_alt": "Screenshot of the Niuniu workstation: parallel task list, chat panel, commit feed, and terminal"
+  },
+  "goal_loop": {
+    "section_eyebrow": "Core capability",
+    "section_title": "Goal in. Done out.",
+    "section_subtitle": "You define the goal; the agent owns plan → execute → verify on its own, and only comes back to you when it actually needs you.",
+    "steps": [
+      { "n": "1", "title": "Write the goal", "desc": "File the work as an issue — one sentence is enough; no need to spell out the code." },
+      { "n": "2", "title": "Agent plans", "desc": "Inside the workspace, the agent reads context, breaks the work down, and proposes a plan." },
+      { "n": "3", "title": "Parallel execution", "desc": "Many workspaces pursue their own goals in parallel; each agent works directly in its own git worktree." },
+      { "n": "4", "title": "Self-verification", "desc": "After changes, the agent runs tests, reads the diff, self-reviews, and iterates on failures." },
+      { "n": "5", "title": "Only when blocked", "desc": "You only get pinged for real blockers — missing credentials, decisions, risky actions. Otherwise it ships quietly." }
+    ]
+  },
+  "deploy": {
+    "section_title": "Pick your deployment",
+    "section_subtitle": "Two flavors — from solo desktop to enterprise self-host.",
+    "personal": {
+      "title": "Personal",
+      "subtitle": "Local-first · 3 platforms · Zero deps",
+      "cta": "Download",
+      "features": ["macOS / Windows / Linux", "git worktree isolation", "SQLite backend"]
+    },
+    "self_hosted": {
+      "title": "Self-Hosted Team",
+      "subtitle": "Docker · On-prem · Unlimited",
+      "cta": "View install docs",
+      "features": ["docker compose deploy", "Private data", "Custom audit"]
+    }
+  },
+  "features": {
+    "section_title": "Core capabilities",
+    "items": [
+      { "title": "Goal-driven autonomy", "desc": "Write down the goal; the agent plans, executes, and verifies on its own — only pinging you when actually blocked." },
+      { "title": "Parallel workspaces", "desc": "One workspace = one git worktree + isolated agent session. Many run in parallel without stepping on each other." },
+      { "title": "Built-in kanban", "desc": "Issues, checklists, comments, timeline — all in one place." },
+      { "title": "Dual agent paths", "desc": "PTY terminal or structured proxy — pick what fits the task." },
+      { "title": "Harness pipelines", "desc": "spec → plan → impl → test, automated, gated, observable." },
+      { "title": "MCP-native", "desc": "Claude Code reads Niuniu state directly via MCP." }
+    ]
+  },
+  "screenshot": {
+    "alt": "Niuniu dashboard screenshot",
+    "caption": "One workstation. Many parallel AI Agent sessions."
+  },
+  "bottom_cta": {
+    "headline": "Ready to get started?",
+    "subhead": "Download the desktop edition, or explore Self-Hosted Team.",
+    "primary": "Download",
+    "secondary": "Read the docs →"
+  },
+  "footer": {
+    "product": "Product",
+    "docs": "Docs",
+    "resources": "Resources",
+    "about": "About",
+    "copyright": "© 2026 Niuniu. All rights reserved.",
+    "icp": ""
+  },
+  "pricing": {
+    "page_title": "Pricing",
+    "page_subtitle": "Pick the deployment that fits.",
+    "tiers": {
+      "personal": { "name": "Personal", "price_label": "Free", "cta": "Download" },
+      "self_hosted": { "name": "Self-Hosted Team", "price_label": "Annual license", "cta": "Contact sales" }
+    },
+    "comparison_title": "Compare tiers",
+    "faq_title": "FAQ"
+  },
+  "changelog": {
+    "page_title": "Changelog",
+    "subtitle": "Release notes for every desktop app version, newest first.",
+    "netdisk_title": "Baidu Netdisk download",
+    "netdisk_desc": "Mainland China users can download the installers via Baidu Netdisk (recommended when GitHub is slow).",
+    "netdisk_cta": "Open Baidu Netdisk",
+    "empty": "No releases published yet.",
+    "fetch_error": "Failed to fetch releases",
+    "view_on_github": "View all releases on GitHub →"
+  },
+  "docs": {
+    "edit_on_github": "Edit this page on GitHub",
+    "prev": "Previous",
+    "next": "Next",
+    "on_this_page": "On this page",
+    "search_placeholder": "Search the docs..."
+  },
+  "groups": {
+    "intro": "Getting started",
+    "install": "Install",
+    "concepts": "Concepts",
+    "guides": "Guides",
+    "faq": "Troubleshooting"
+  },
+  "404": {
+    "title": "Page not found",
+    "subtitle": "The page you're looking for doesn't exist or has moved.",
+    "back": "Back to home"
+  }
+}

@@ -1,0 +1,98 @@
+---
+title: 5 分钟快速上手
+description: 下载、装好系统依赖、创建工作空间、发送 hello 跑通对话。
+group: intro
+order: 2
+---
+
+本文用 Personal 桌面版作为路径，4 步跑通完整流程。
+
+## 1. 下载
+
+访问 [GitHub Releases](https://github.com/threeq/niuniu-public/releases)，下载对应平台的安装包：
+
+- macOS：`niuniu-personal-<版本>-darwin-arm64`（Apple Silicon）或 `niuniu-personal-<版本>-darwin-amd64`（Intel）
+- Windows：`niuniu-personal-<版本>-windows-amd64.exe`
+- Linux：`niuniu-personal-<版本>-linux-amd64`
+
+`<版本>` 即 release tag，例如 `v1.0.7`。下载后双击启动，浏览器会自动打开 `http://localhost:3000`。个人版无需登录账号，直接进入即可。
+
+## 2. 系统依赖说明
+
+牛牛通过命令行工具实际驱动代码动作，需要以下外部 CLI：
+
+| 工具 | 作用 | 最低要求 |
+|---|---|---|
+| **Node.js** | 运行 Agent CLI | v20+ LTS |
+| **Python 3** | agent 偶尔调用脚本与工具链 | 3.10+ |
+| **Git** | 创建 worktree、提交差异、读取历史 | 2.30+ |
+| **Claude Code CLI 或 Codex CLI**（二选一即可） | 与模型通信的代理 | 最新版 |
+
+### 进入路径
+
+主界面右上角点 **⚙ 设置** 按钮 → 切到 **系统依赖** Tab：
+
+![设置 → 系统依赖](/images/settings-system-deps.jpg)
+
+每项都会显示安装状态、版本号和绝对路径：已安装显示绿色圆点；未安装显示红色 ✗ 并出现 **一键安装** 按钮（macOS 走 `brew`、Windows 走 `winget`、Linux 走 `apt`）。**CLI 依赖 Node.js，必须先装 Node 再装 Claude Code 或 Codex**。
+
+如果是离线环境或精简系统，把按钮换成"打开下载页"手动安装即可。详细说明见 [Personal 桌面版安装](/docs/install/personal#3-系统依赖)。
+
+### 模型账号：登录或配置 Key
+
+agent 调用模型有两种方式，任选其一即可：
+
+1. **登录订阅账号**（推荐 Claude Pro / Max 或 ChatGPT Plus / Pro 用户）：
+   - **Claude**：在系统依赖页 Claude Code CLI 卡片右侧点 **Claude 登录**，或到 **设置 → Claude 账号** 新增账号；终端走 `claude /login` OAuth 流程。
+   - **Codex**：到 **设置 → Codex 账号** 新增账号，按提示完成 OpenAI 登录。
+2. **三方平台用 API Key**（智谱、通义千问、DeepSeek、MiniMax、Kimi 等）：到 **设置 → 环境变量** 找到对应预设，把 `ANTHROPIC_AUTH_TOKEN`（或对应 Key 变量）替换成你自己申请的 API Key 即可，**无需登录账号**。
+
+![设置 → 环境变量](/images/settings-env-vars.jpg)
+
+> 预设里端点和模型名都已经填好；workspace 创建后在其设置的"环境变量"区域 **从预设导入** 即可生效。
+
+## 3. 创建工作空间
+
+依赖齐备后，回到主界面：
+
+1. 切到 **Workspaces** 标签，点 **+ 新建 Workspace**
+2. 填写名称，选择关联的仓库（首次使用可在弹窗里直接添加一个本地路径或 git URL）
+3. 默认基于仓库默认分支拉一个 git worktree —— 这是该 workspace 的独立工作目录
+4. 创建完成后自动跳到 workspace 详情页
+
+> 牛牛会自动在 worktree 里放好 `.mcp.json`，让 Claude Code 能读取项目状态。
+
+### 三方平台账号：在工作空间里选择环境变量
+
+如果你在第 2 步选择的是 **三方平台 API Key**（智谱、通义千问、DeepSeek、MiniMax、Kimi 等），登录订阅账号那条路就走不通，必须在 **每个工作空间** 单独注入对应的环境变量，agent 启动时才会用三方端点替代官方 Claude / Codex。
+
+操作路径：workspace 详情页右上角 **⚙ 工作空间设置** → 找到 **环境变量** 区域 → 点 **从预设导入** → 在下拉里选你要用的平台预设。
+
+导入前后对比如下：
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4">
+
+![导入前：环境变量为空，下拉里列出可选预设](/images/workspace-env-import-before.png)
+
+![导入后：ANTHROPIC_* 系列环境变量已按预设填好](/images/workspace-env-import-after.png)
+
+</div>
+
+左图是初始状态——"环境变量"区域显示"暂无环境变量"，点开 **从预设导入** 能看到通义千问、DeepSeek、Kimi、MiniMax、智谱等候选。右图是导入 DeepSeek 预设后的样子：`ANTHROPIC_AUTH_TOKEN`、`ANTHROPIC_BASE_URL`、各档位模型名（Haiku / Sonnet / Opus / SubAgent）都被一次性填好，只需把 `ANTHROPIC_AUTH_TOKEN` 的 `value` 替换成你自己的 API Key 即可。
+
+> 注意：环境变量是 **per-workspace** 的，每新建一个工作空间都要重新导入一次；如果同一平台要复用，可以先在 **设置 → 环境变量** 改好预设，再到工作空间里导入。
+
+## 4. 发送 hello 进行对话
+
+workspace 详情页点 **启动 Agent**，左侧聊天框输入：
+
+```
+hello
+```
+
+回车发送。牛牛通过 PTY 终端拉起 `claude` CLI，agent 会回复一句问候并准备好接收下一步指令——到这里完整流程就跑通了。
+
+## 下一步
+
+- 了解 [核心概念](/docs/concepts) —— Project / Repository / Workspace / Agent 是怎么关联的
+- 阅读 [Workspace 与 Agent 对话指南](/docs/guides/agent)

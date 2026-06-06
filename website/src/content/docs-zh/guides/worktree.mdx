@@ -1,0 +1,48 @@
+---
+title: Git Worktree 与代码评审
+description: 工作区与 worktree 关系、diff 查看、内联评论 → agent。
+group: guides
+order: 3
+---
+
+牛牛给每个 workspace 一个独立 git worktree，多个 workspace 可以同时改同一个仓库的不同分支，**互不干扰**。
+
+## Worktree 是什么
+
+git worktree 是一个 native git 特性，允许同一个仓库在不同目录 check out 不同分支。每个 worktree 共享相同的 `.git` 对象库，但有独立的工作目录和 HEAD。
+
+牛牛在 `~/.niuniu/<owner>/workspaces/<ws-id>/.worktrees/<repo>/` 创建 worktree。每个 workspace 创建时基于仓库的 `base_branch`（通常是 main）。
+
+## 同时改多个分支
+
+举个例子：
+
+- Workspace A：基于 main，分支 `ws-1/main`，改后端
+- Workspace B：基于 main，分支 `ws-2/main`，改前端
+
+两个 workspace 完全隔离的 git 状态，不会互相 stash / commit 错文件。
+
+## 查看 diff
+
+**Workspace → Diff 标签**。牛牛会执行 `git diff <base_branch>...HEAD` 并把结果渲染成 GitHub 风格的对比视图。
+
+## 内联评论
+
+在 diff 上选中代码行，按 **+** 按钮加评论。评论可以：
+
+- **保留**作为 review notes（不发送）
+- **发送给 agent**——把评论作为指令注入到 agent 输入框，让 Claude 修改
+
+这是牛牛的代码评审核心循环：**人评审 → agent 修改 → 再评审**。
+
+## 完成 workspace
+
+所有改动评审完成后，**Workspace → 完成**：
+
+- 牛牛把分支 push 到原仓库（如果配置了 remote）
+- 关联的 issue 自动移到 Done
+- worktree 不会自动删除（保留以便回顾），可在 **设置 → 清理** 里手动归档
+
+## 下一步
+
+- [常见问题](/docs/faq)

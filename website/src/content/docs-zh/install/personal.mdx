@@ -1,0 +1,218 @@
+---
+title: Personal 桌面版安装
+description: 三平台二进制下载、首次启动、系统依赖、Claude / Codex 订阅账号与三方模型账号配置。
+group: install
+order: 1
+---
+
+Personal 是牛牛的单机本地版本：所有数据存在你电脑的 SQLite 文件里，不需要服务器、不需要 PostgreSQL，启动就能用。
+
+本文按"装好二进制 → 备齐依赖 → 配好账号"三步走，跟着做完即可在 5 分钟内启动第一个 agent。
+
+## 1. 系统要求
+
+- **macOS** 11+（Apple Silicon 或 Intel）—— 系统自带 WKWebView，无额外依赖
+- **Windows** 10+ x64 —— 需要 [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
+  - 普通 Win10 / Win11 家庭版 / 专业版**自带**该组件
+  - **LTSC、企业精简版、Windows Server、IoT 等版本默认不预装**，需要手动下载 "Evergreen Standalone Installer"（x64）安装
+  - 如果缺失，niuniu-personal 启动时会弹出**原生提示框**引导你打开下载页 —— 安装后重新启动即可
+- **Linux** glibc 2.31+ x64 —— 需要系统 WebKitGTK 库（缺失时进程会因为动态链接器失败而无法启动）
+  - Debian / Ubuntu：`sudo apt install libwebkit2gtk-4.1-0`
+  - Fedora / RHEL：`sudo dnf install webkit2gtk4.1`
+  - Arch / Manjaro：`sudo pacman -S webkit2gtk`
+  - 服务器精简版 / 最小化镜像通常缺这个包
+
+## 2. 下载与首次启动
+
+访问 [GitHub Releases](https://github.com/threeq/niuniu-public/releases)，找到最新版本，下载：
+
+| 平台 | 文件名 |
+|---|---|
+| macOS Apple Silicon | `niuniu-personal-<版本>-darwin-arm64` |
+| macOS Intel | `niuniu-personal-<版本>-darwin-amd64` |
+| Windows | `niuniu-personal-<版本>-windows-amd64.exe` |
+| Linux | `niuniu-personal-<版本>-linux-amd64` |
+
+> `<版本>` 即 release tag，例如 `v1.0.7`。
+
+### 国内镜像（百度网盘）
+
+访问 GitHub 较慢或受限时，可从百度网盘下载同一版本的二进制：
+
+- 链接：[https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7](https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7)
+- 提取码：`hmn7`
+
+> 网盘内的文件名、版本号与 GitHub Releases 保持一致；如需最新版本仍以 GitHub Releases 为准。
+
+**macOS / Linux**：下载后给文件加可执行权限（`chmod +x niuniu-personal-*`）再双击启动。macOS 首次运行可能需要在 系统设置 → 隐私与安全性 里允许"开发者未签名"。
+**Windows**：双击 `.exe`，可能需要批准 SmartScreen 提示。
+
+启动后浏览器会自动打开 `http://localhost:3000`。个人版默认无需登录账号，直接进入主界面即可。
+
+## 3. 系统依赖
+
+牛牛的 agent 通过命令行工具实际驱动 `claude` 完成代码动作，需要四个外部 CLI 工具：
+
+| 工具 | 作用 | 最低要求 |
+|---|---|---|
+| **Node.js** | 运行 Agent CLI（基于 npm 全局安装） | v20+ LTS |
+| **Python 3** | agent 偶尔会调用脚本与工具链 | 3.10+ |
+| **Git** | 创建 worktree、提交差异、读取历史 | 2.30+ |
+| **Claude Code CLI 或 Codex CLI** | 与模型通信的代理；任选其一安装即可 | 最新版 |
+
+打开 **设置 → 系统依赖** 可以看到每项的安装状态、版本号和绝对路径：已安装显示绿色圆点；未安装显示红色 ✗ 并出现 **一键安装** 按钮。
+
+### 一键安装
+
+个人版根据当前系统调用对应包管理器，无需手动敲命令：
+
+| 工具 | Windows | macOS | Linux |
+|---|---|---|---|
+| Node.js | `winget install -e --id OpenJS.NodeJS.LTS` | `brew install node` | `sudo apt-get install -y nodejs` |
+| Python 3 | `winget install -e --id Python.Python.3.13` | `brew install python@3.13` | `sudo apt-get install -y python3` |
+| Git | `winget install -e --id Git.Git` | `brew install git` | `sudo apt-get install -y git` |
+| Claude Code CLI | `npm install -g @anthropic-ai/claude-code` | （同左） | （同左，npm 全局目录若在系统目录需 `sudo`） |
+| Codex CLI（可替代 Claude Code CLI） | `npm install -g @openai/codex` | （同左） | （同左） |
+
+点击 **一键安装** 后会展开实时日志面板；Windows 上 winget 会弹独立 UAC 对话框，macOS / Linux 在日志面板内输出。安装完成后页面会自动重新探测。
+
+> **Claude Code CLI / Codex CLI 都依赖 Node.js**，所以必须先装 Node 再装它们。`node` 缺失时两张卡片的安装按钮都会被禁用。两者只需装一个；同时安装也可以，按 workspace 自由切换。
+
+### 手动安装
+
+如果当前系统没有 winget / brew / apt（例如 Linux 精简镜像或离线环境），一键安装按钮会变成"打开下载页"，跳转到对应官网手动下载：
+
+- Node.js：[nodejs.org](https://nodejs.org/)
+- Python 3：[python.org/downloads](https://www.python.org/downloads/)
+- Git：[git-scm.com/downloads](https://git-scm.com/downloads)
+- Claude Code CLI：[docs.claude.com/en/docs/claude-code/setup](https://docs.claude.com/en/docs/claude-code/setup)
+- Codex CLI：[github.com/openai/codex](https://github.com/openai/codex)
+
+装完后回到设置页点 **重新检测** 即可刷新状态。
+
+### Git 身份配置
+
+Git 安装完成后，**设置 → 系统依赖** 的 Git 卡片下方会展示当前 git 全局身份（`user.name <user.email>`），点 **修改** 可直接写入 `~/.gitconfig`。未配置 git 身份时，牛牛在新增仓库前会提示先配置。
+
+## 4. 模型订阅账号（Claude / Codex）
+
+牛牛通过 `claude` / `codex` CLI 与对应模型通信，最常用的方式是登录你的 **Claude.ai / Claude Code 订阅账号**（推荐 Claude Pro / Max 用户）或 **ChatGPT 订阅账号**（推荐 ChatGPT Plus / Pro 用户）。两者只需用一个；如果你倾向三方平台（智谱 / 通义 / DeepSeek 等），跳过本节，直接看 [5. 三方模型账号](#5-三方模型账号环境变量预设)。
+
+### 登录入口
+
+有两种登录入口，效果等价：
+
+1. **设置 → 系统依赖** → 在 Claude Code CLI 卡片右侧点 **Claude 登录**
+2. **设置 → Claude 账号** → 点 **+ 新增账号**，填入账号名后点 **登录**
+
+任意一种入口都会启动一个 xterm 终端窗口，执行 `claude /login`：
+
+1. Claude CLI 打印一个 OAuth 链接，**复制粘贴到浏览器**
+2. 浏览器完成 OAuth 授权，回调页面会显示一段 code
+3. 把 code 粘回牛牛的登录终端，回车确认
+4. 登录成功后窗口自动关闭，账号卡片状态变为"已登录"，并显示绑定的邮箱
+
+> 凭证存储在 `~/.claude/`（Anthropic 官方目录），牛牛不保存原始 token，只记录账号名 → 凭证目录的映射。
+
+### 多账号与默认账号
+
+个人版允许配置多个 Claude 账号（例如"个人号"和"工作号"分开使用），在 **设置 → Claude 账号** 中：
+
+- 每个账号有独立名字、状态（已登录 / 未登录 / 登录失败）、最近使用时间
+- 顶部"**新建工作空间的默认账号**"下拉可选默认账号；新建 workspace 时会预填该账号
+- 单个 workspace 也可在其设置中独立切账号，覆盖默认
+
+### 用量查看
+
+在 **设置 → Claude 账号** 中展开任一已登录账号，可看到：
+
+- **5 小时计费块**：当前活跃窗口的输入 / 输出 / 缓存 token 数
+- **7 天窗口**：分全模型 / Sonnet 系列 / Opus 系列 三档累计
+- **订阅档次**：从 Claude CLI 的本地会话日志聚合得出
+
+> 数据完全来自本机 `~/.claude/` 的会话 JSONL，**不上传到任何服务器**。
+
+### Codex 账号
+
+如果选择走 Codex CLI（订阅 ChatGPT Plus / Pro），登录入口在 **设置 → Codex 账号**：
+
+1. 点 **+ 新增账号**，填入账号名
+2. 终端窗口里 `codex` 会启动 OpenAI OAuth 流程，按提示登录即可
+3. 凭证存储在 `~/.codex/`（Codex CLI 官方目录）
+
+多账号、默认账号、按 workspace 切换的逻辑与 Claude 账号完全一致，只是在 **设置 → Codex 账号** 中管理。
+
+## 5. 三方模型账号（环境变量预设）
+
+如果你想用 **Kimi / 通义千问 / DeepSeek / MiniMax / 智谱** 等国产模型替代 Claude 官方，可以通过环境变量把 `claude` CLI 指向第三方 Anthropic 兼容端点。牛牛在 **设置 → 环境变量** 内置了 5 个常用预设：
+
+| 预设名 | 提供商 | 端点 |
+|---|---|---|
+| 智谱 | GLM 系列模型 | `https://open.bigmodel.cn/api/anthropic` |
+| 通义千问 | Qwen 3.6 | `https://coding.dashscope.aliyuncs.com/apps/anthropic` |
+| DeepSeek | DeepSeek V4 | `https://api.deepseek.com/anthropic` |
+| MiniMax | M2.7 模型 | `https://api.minimaxi.com/anthropic` |
+| Kimi | K2.6 | `https://api.moonshot.cn/anthropic` |
+
+### 配置 API Key
+
+预设里已经填好了模型名和端点，**只需要替换 `ANTHROPIC_AUTH_TOKEN` 为你自己的 API Key**：
+
+1. 打开 **设置 → 环境变量**，点开任一预设（例如 Kimi）右侧的 ✏ 编辑按钮
+2. 找到 `ANTHROPIC_AUTH_TOKEN` 一行，把占位值（如 `${YOUR_MOONSHOT_API_KEY}` / `sk-` / `.`）替换成你从对应平台申请到的真实 Key
+3. 保存
+
+各平台 Key 申请入口：
+
+- 智谱 BigModel：[open.bigmodel.cn/usercenter/proj-mgmt/apikeys](https://open.bigmodel.cn/usercenter/proj-mgmt/apikeys)
+- 通义千问 DashScope：[dashscope.console.aliyun.com/apiKey](https://dashscope.console.aliyun.com/apiKey)
+- DeepSeek：[platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+- MiniMax：[platform.minimaxi.com/user-center/basic-information/interface-key](https://platform.minimaxi.com/user-center/basic-information/interface-key)
+- Kimi (Moonshot)：[platform.moonshot.cn/console/api-keys](https://platform.moonshot.cn/console/api-keys)
+
+### 在 workspace 中启用
+
+预设本身只是一份模板；要让某个 workspace 真正走第三方模型，需要在 workspace 设置中导入：
+
+1. 打开 workspace → 右上角 ⚙ 设置 → **环境变量** 区域
+2. 点 **从预设导入** → 选择目标预设（如 Kimi）
+3. 保存。该 workspace 启动 agent 时会把这些环境变量注入 `claude` CLI 进程
+
+> 一个 workspace 一次只能使用一组模型；导入新预设会与已有变量**追加**合并，同名变量保留旧值，避免误覆盖。
+
+### 自定义预设
+
+如果用的是上述列表外的服务（例如自建 Claude 兼容网关），点 **+ 新建预设** 自行填写名称、描述和键值对即可。常用的几个变量含义：
+
+- `ANTHROPIC_BASE_URL`：服务端点（必填）
+- `ANTHROPIC_AUTH_TOKEN`：鉴权 token（必填）
+- `ANTHROPIC_MODEL`：默认模型名（可选）
+- `ANTHROPIC_DEFAULT_{OPUS,SONNET,HAIKU}_MODEL`：分别覆盖三档模型
+- `API_TIMEOUT_MS`：单次请求超时（毫秒）
+- `CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC=1`：关闭非必要遥测
+
+## 6. 数据目录
+
+所有数据保存在 `~/.niuniu/`：
+
+```
+~/.niuniu/
+├── config.yaml          # 配置
+├── niuniu.db            # SQLite 数据库
+├── personal.boot.lock   # 单实例锁
+└── users/<id>/          # 你的 workspace、repository 目录
+```
+
+Claude 官方账号凭证另存于 `~/.claude/`（Anthropic 官方目录，由 `claude` CLI 自身管理）。
+
+迁移到新机器：复制整个 `~/.niuniu/` + `~/.claude/` 两个目录即可。
+
+## 7. 升级
+
+下载新版本，覆盖旧二进制。数据库会自动迁移，无需手动操作。强烈建议升级前备份 `~/.niuniu/`。
+
+## 下一步
+
+- [5 分钟快速上手](/docs/quickstart) 跑通第一个 workspace
+- [Workspace 与 Agent 对话指南](/docs/guides/agent) 看懂 agent 怎么工作
+- 团队协作请看 [团队私有版安装](/docs/install/self-hosted)

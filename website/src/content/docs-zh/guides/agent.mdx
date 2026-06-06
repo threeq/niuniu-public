@@ -1,0 +1,147 @@
+---
+title: Workspace 与 Agent 对话
+description: 创建 workspace、PTY 终端 vs 代理路径、消息历史、cost 追踪、自动托管、定时任务与项目经验积累。
+group: guides
+order: 2
+---
+
+Workspace 是你和 Claude Code 协作的主战场。牛牛提供两种 agent 集成路径，按场景选用。
+
+## 启动 Workspace
+
+从 issue 启动是最常见路径（[Kanban 指南](/docs/guides/kanban)），也可以从 **Workspaces** 标签直接 **+ 新建**。新建时会让你选关联的 issue（可选）和 repositories。
+
+## PTY 终端模式
+
+**Workspace → Terminal 标签**。这是 `claude` CLI 的真终端，与本地 `claude` 命令完全一致：
+
+- 支持 colored output、ANSI 控制序列
+- 你可以在终端里直接打命令（git、ls、test）
+- 牛牛通过 WebSocket 把字符流桥接到浏览器
+- 终端内容不持久化（agent 重启后历史清空）
+
+适合：自由形式的探索、需要实时交互的调试。
+
+## 结构化代理模式
+
+**Workspace → Chat 标签**。这是牛牛自实现的对话面板：
+
+- 每条消息（你的提问、Claude 的回复）都持久化到数据库
+- 自动追踪 token cost，可在 **Workspace → Cost** 标签看曲线
+- 支持复制单条消息、引用回复、@文件
+- 切换浏览器 / 关机 / 重启不影响历史
+
+适合：长期累积的工作流、要追溯讨论的场景、跨设备同步。
+
+## 切换路径
+
+两种路径**共享 workspace 状态**——文件、worktree、git 历史都一致；只是 agent 接口不同。可以同一个 workspace 里两种交替用。
+
+## 文件树与差异
+
+侧栏 **Files** 显示 workspace 完整文件树，**Diff** 显示当前 git 修改的差异（与 base branch 对比）。
+
+## 自动托管（Autohost）
+
+Autohost 让 agent 在你离开屏幕时也能继续推进任务——夜里跑全量测试、批量重构、长链路的实现都不用守着。
+
+### 配置入口
+
+workspace 工具栏 → **⚙ 工作空间设置** → 找到 **自动托管** 区域 → 点 **配置自动托管…**。可调的几个旋钮：
+
+- **自动续跑轮数**：agent 一次回复后，自动用"继续"提示词再触发的最大次数（默认 0，即关闭）
+- **错误重试次数**：遇到工具调用 / 命令执行失败时自动重试的次数
+- **续跑提示词 / 恢复提示词**：自动触发时实际发给 agent 的话，默认是简短的"继续"，你可以改成"先核对一下当前进度，再继续下一步"之类更稳的指令
+- **触发条件**：可以选只在某些 [Harness](/docs/concepts#harness工程规范) gate 通过 / 失败后续跑
+
+### LLM-first 裁判
+
+默认 Autohost 用比例规则（ratio）决定继续与否；启用 **LLM-first 模式** 后，每次续跑前会让一个 Claude judge 评估"当前进度是否需要继续 / 暂停 / 停止"。判定结果都会落到 `autohost_judge_events` 表里，包括 cost，可以在 Workspace → Cost 标签复盘。
+
+### 适用场景
+
+- 夜间跑全量回归测试
+- 大批量重构（rename / API 迁移），任务清单已固定
+- agent 长链路实现一个 feature，中间偶发命令失败需要自愈
+
+不建议盲开自动托管处理：未明确目标的探索式任务、改动会影响生产数据的脚本、需要人工判断的设计决策。
+
+## 定时任务（Schedules）
+
+定时任务让 workspace 在你下班、休假、甚至关电脑的情况下也能按时被触发——常见用法是"每天凌晨跑一次回归测试"、"每周一上午整理上周代码评审"、"某个固定时刻一次性发提醒"。
+
+定时任务 **挂在 workspace 上**，触发后在该 workspace 内执行；这是有意的设计，确保 worktree、环境变量、agent 上下文都一致。如果你想让多个 workspace 共享同一节奏，每个里各加一条即可。
+
+### 创建定时任务
+
+两种入口：
+
+- **workspace 详情页 → 定时任务** 标签 → **+ 新建**（管理本 workspace 的所有定时）
+- **顶层导航 → Schedules** 页面（查看全部 workspace 的定时，方便排程查漏）
+
+可填的字段：
+
+| 字段 | 说明 |
+|---|---|
+| **名称** | 给定时起个可读名字，会出现在历史记录里 |
+| **触发类型** | `cron`（周期）或 `once`（一次性） |
+| **Cron 表达式** | 仅 cron 类型，标准 5 段或 6 段：`0 2 * * *` 表示每天凌晨 2 点 |
+| **运行时刻** | 仅 once 类型，绝对时间（含时区） |
+| **默认消息** | 触发时实际发给 agent 的 prompt，例如「跑一遍 `make test`，把失败用例汇总成 issue 评论」 |
+| **启用** | 开关；停用后保留配置但不触发 |
+
+牛牛把"下次触发时间"展示在列表里，可以一眼看出排期是否符合预期。
+
+### 触发流程
+
+到点之后，scheduler 进程按以下顺序处理：
+
+1. 检查 workspace 是否还存在、`triggered_by` 用户是否仍是 owner / member——成员被移除会自动停用该定时
+2. 如果该 workspace 配了 `on_schedule` 触发的 [Harness](/docs/concepts#harness工程规范) gate，先跑 gate；不通过则跳过本次执行（结果记录到 schedule_run）
+3. 拉起 workspace 的 agent，把 **默认消息** 作为 prompt 发出
+4. 一次执行 = 一条 `schedule_run` 记录：状态、消息、开始/结束时间都留痕
+
+### 查看执行历史
+
+**workspace → 定时任务 → 历史** 列出近期所有 schedule_run，状态分 `success` / `failure` / `skipped`（被 harness gate 拒）。点开任一行可以跳到对应的 agent 会话，看到当次实际生成的消息与 cost。
+
+### 实践建议
+
+- cron 表达式建议错峰：多个定时任务挤同一分钟会让 agent 排队，可以把测试任务和报表任务相差几分钟
+- 默认消息越具体越好——直接告诉 agent **目标**（"汇总测试结果发到 issue"）而不是 **步骤**（"先 cd …再跑 …"），步骤交给 agent 自己想
+- 跑长任务（>30 分钟）时建议同时打开 [自动托管](#自动托管autohost)，否则 agent 一次回复后就停在等待你输入的状态
+- 对生产数据敏感的任务挂一个 `on_schedule` Harness gate（例如人工审批 ai_judge），多一道保险
+
+## 提取经验（Project Learnings）
+
+经验积累让"上次踩过的坑这次不再踩"自动发生。agent 在 workspace 里发现的模式、坑、决策、错误修复，可以通过 MCP 工具显式留档；下次同一个 Project 的 workspace 启动，新 agent 就能直接读到。
+
+### 写入
+
+agent 自身通过 niuniu MCP 服务器暴露的 `learning_write` 工具记录新经验，常见四种类型：
+
+| 类型 | 用途 |
+|---|---|
+| **pattern** | 项目里反复出现的写法 / 架构习惯 |
+| **gotcha** | 容易踩的坑、反直觉的行为 |
+| **decision** | 已经定下的方案选择，避免再次讨论 |
+| **error-fix** | 某类错误的根因 + 修复方法 |
+
+你也可以在 chat 里直接让 agent "把刚才那个发现写成 learning"，agent 会调用工具完成写入。
+
+### 读取
+
+经验数据落在 Project 维度。每次 workspace 启动，牛牛把当前 Project 的所有 learnings 渲染成 worktree 根目录的 `.learnings.generated.md`——这文件随 git 仓库一起暴露给 agent 的初始上下文，新 agent 一开机就能读到。
+
+UI 入口：**Project 详情页 → 经验** 标签可以浏览、编辑、删除任一条 learning。`learning_list` / `learning_delete` MCP 工具支持 agent 自主查询与修订（例如发现旧 learning 过时后主动删除）。
+
+### 实践建议
+
+- 每解一个**非显然**的 bug 之后，让 agent 写一条 `error-fix` learning：根因比"改了哪一行"重要
+- 项目的代码风格、技术栈选择写成 `decision`，新 agent 不会重新提案
+- 不要把临时调试笔记写成 learning——learning 是给"下一个 agent"看的契约，不是给本次工作流看的 todo
+
+## 下一步
+
+- [Git Worktree 与代码评审](/docs/guides/worktree)
+- [常见问题](/docs/faq) — agent 启不来、claude CLI 找不到等

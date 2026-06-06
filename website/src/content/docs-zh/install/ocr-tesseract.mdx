@@ -1,0 +1,123 @@
+---
+title: "Tesseract OCR 安装"
+description: "为牛牛的读取加速（OCR）功能安装 Tesseract：macOS / Linux / Windows 分平台步骤、中英文语言包与安装验证。"
+group: install
+order: 4
+---
+
+牛牛的**读取加速**会在本地用 [Tesseract OCR](https://github.com/tesseract-ocr/tesseract) 把截图、扫描件、图片里的文字识别成可检索的文本，全程在你电脑上完成，不上传图片。
+
+Tesseract 是一个**独立的系统级程序**，不随牛牛一起打包。如果本机没装，牛牛会弹出"未检测到 OCR 引擎"的提示并把你带到这一页。跟着下面对应你系统的一节装好即可——通常 1~2 分钟。
+
+> 只需要安装一次。装好后牛牛会自动探测到 `tesseract` 命令，无需重启电脑。
+
+## 1. 按平台安装
+
+### macOS
+
+用 [Homebrew](https://brew.sh) 安装最省事：
+
+```bash
+brew install tesseract
+```
+
+这会装上 Tesseract 主程序，并自带英文（`eng`）与方向检测（`osd`）数据。需要识别中文等其它语言时，再装全量语言包：
+
+```bash
+brew install tesseract-lang
+```
+
+> 没有 Homebrew？先在终端执行官网的一行安装脚本：`/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`，再回来执行上面的命令。
+
+### Linux
+
+**Debian / Ubuntu 系：**
+
+```bash
+sudo apt update
+sudo apt install -y tesseract-ocr
+# 语言包：简体中文 + 繁体中文（英文 eng 已随主包安装）
+sudo apt install -y tesseract-ocr-chi-sim tesseract-ocr-chi-tra
+```
+
+**Fedora / RHEL / Alibaba Linux 系：**
+
+```bash
+sudo dnf install -y tesseract
+sudo dnf install -y tesseract-langpack-chi_sim tesseract-langpack-chi_tra
+```
+
+**Arch / Manjaro：**
+
+```bash
+sudo pacman -S tesseract tesseract-data-eng tesseract-data-chi_sim tesseract-data-chi_tra
+```
+
+> 麒麟 / 统信（UOS）等国产系统多为 Debian 或 RHEL 衍生，按对应那一组命令即可，包名一致。
+
+### Windows
+
+Windows 没有官方安装器，社区维护的 **UB Mannheim** 构建是事实标准：
+
+1. 打开 [UB Mannheim Tesseract 下载页](https://github.com/UB-Mannheim/tesseract/wiki)，下载最新的 `tesseract-ocr-w64-setup-*.exe`（64 位）。
+2. 运行安装器。在 **"Additional language data"（附加语言数据）** 步骤里勾选你需要的语言——至少勾上 **Chinese (Simplified)** 与 **Chinese (Traditional)**，英文默认已含。
+3. 安装路径保持默认 `C:\Program Files\Tesseract-OCR` 即可。
+4. **关键**：在 **"Select Additional Tasks"** 步骤勾选 **"Add to PATH"**（把 Tesseract 加入环境变量）。若安装器没有该选项，安装完后手动把 `C:\Program Files\Tesseract-OCR` 加入系统 `Path`。
+
+装完后**新开**一个 PowerShell 窗口（让 PATH 生效）再做下面的验证。
+
+## 2. 语言包说明
+
+Tesseract 的识别能力由**语言数据文件**（`*.traineddata`）决定，每种语言一个：
+
+| 语言 | 数据代号 |
+|---|---|
+| 英文 | `eng` |
+| 简体中文 | `chi_sim` |
+| 繁体中文 | `chi_tra` |
+| 方向 / 脚本检测 | `osd` |
+
+- 只装了主程序、没装中文包时，识别中文会失败或乱码——务必按上面对应系统补装 `chi_sim`（和按需的 `chi_tra`）。
+- 语言数据默认放在 Tesseract 的 `tessdata` 目录。如果你把数据放到了别处，用环境变量 `TESSDATA_PREFIX` 指向那个目录。
+
+## 3. 验证安装
+
+打开终端（Windows 用新开的 PowerShell），确认能跑通：
+
+```bash
+tesseract --version
+```
+
+能打印出 `tesseract v5.x.x` 之类的版本号，说明主程序就绪。再看语言包是否到位：
+
+```bash
+tesseract --list-langs
+```
+
+输出里应出现 `eng`、`chi_sim`（以及你装的 `chi_tra`）。三者都在，就全部就绪了。
+
+> **版本要求**：建议 Tesseract **4.0 以上**（5.x 更佳）。Linux 老发行版仓库里可能是 3.x，识别效果差很多，尽量用上面的命令装新版。
+
+## 4. 回到牛牛
+
+依赖装好后：
+
+1. 回到牛牛，**重新触发一次**读取加速 / OCR 操作（或在出现"未检测到 OCR 引擎"提示的地方点"重新检测"）。
+2. 牛牛会重新探测系统里的 `tesseract` 命令，探测到即可正常识别。
+3. 若仍提示未安装，多半是 **PATH 没生效**——彻底关掉牛牛与终端后重新打开，再试一次。
+
+## 5. 常见问题
+
+**提示装好了，牛牛还说没装？**
+绝大多数是 `tesseract` 不在 `PATH` 里。在终端跑 `tesseract --version`：如果终端也报"找不到命令"，说明 PATH 没配好（Windows 重点检查"Add to PATH"那一步），按上面对应系统重装或手动补 PATH。
+
+**识别中文是空白 / 乱码？**
+缺中文语言包。跑 `tesseract --list-langs` 确认有没有 `chi_sim`，没有就按你系统那一节补装语言包。
+
+**`--list-langs` 找不到任何语言？**
+语言数据目录不对。把 `TESSDATA_PREFIX` 环境变量指向真正放 `*.traineddata` 的 `tessdata` 目录。
+
+## 下一步
+
+- [Personal 桌面版安装](/docs/install/personal) —— 牛牛本体的安装与依赖
+- [常见问题](/docs/faq) —— 其它依赖与排错

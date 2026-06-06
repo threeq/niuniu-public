@@ -1,0 +1,13 @@
+---
+import { getLocaleFromUrl, switchLocalePath, t, type Locale } from '@/lib/i18n';
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const target = switchLocalePath(locale, Astro.url.pathname || '/');
+const label = locale === 'zh' ? 'EN' : '中';
+---
+<a
+  href={target}
+  aria-label={t(locale, 'nav.lang')}
+  class="inline-flex h-9 min-w-9 items-center justify-center rounded-md px-2 text-sm font-medium hover:bg-[rgb(var(--color-card))] transition-colors"
+>
+  {label}
+</a>
