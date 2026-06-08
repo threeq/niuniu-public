@@ -77,6 +77,10 @@
     "docs": "Docs",
     "resources": "Resources",
     "about": "About",
+    "contact": "Contact",
+    "email": "Email",
+    "wechat": "WeChat",
+    "wechat_qr_alt": "Niuniu WeChat QR code",
     "copyright": "© 2026 Niuniu. All rights reserved.",
     "icp": ""
   },

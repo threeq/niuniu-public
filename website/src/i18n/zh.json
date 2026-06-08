@@ -77,6 +77,10 @@
     "docs": "文档",
     "resources": "资源",
     "about": "关于",
+    "contact": "联系我们",
+    "email": "邮箱",
+    "wechat": "微信",
+    "wechat_qr_alt": "牛牛微信二维码",
     "copyright": "© 2026 牛牛 Niuniu. 保留所有权利。",
     "icp": ""
   },

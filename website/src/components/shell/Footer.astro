@@ -35,6 +35,25 @@ const groups = [
       </div>
     ))}
   </div>
+  <div class="container-doc mt-10 pt-6 border-t border-[rgb(var(--color-border))] flex flex-wrap items-center gap-5 text-sm">
+    <img
+      src="/images/wechat-qr.jpg"
+      alt={t(locale, 'footer.wechat_qr_alt')}
+      width="88"
+      height="88"
+      loading="lazy"
+      decoding="async"
+      class="rounded-md border border-[rgb(var(--color-border))]"
+    />
+    <div class="space-y-1">
+      <h3 class="font-semibold">{t(locale, 'footer.contact')}</h3>
+      <p class="text-[rgb(var(--color-muted))]">
+        {t(locale, 'footer.email')}:
+        <a href="mailto:three3q@qq.com" class="hover:text-[rgb(var(--color-fg))]">three3q@qq.com</a>
+      </p>
+      <p class="text-[rgb(var(--color-muted))]">{t(locale, 'footer.wechat')}: UU2life</p>
+    </div>
+  </div>
   <div class="container-doc mt-8 pt-6 border-t border-[rgb(var(--color-border))] text-xs text-[rgb(var(--color-muted))] flex flex-wrap items-center justify-between gap-2">
     <span>{t(locale, 'footer.copyright')}</span>
     <span>{t(locale, 'footer.icp')}</span>
