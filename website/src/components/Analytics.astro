@@ -1,53 +1,54 @@
 ---
 /**
- * First-party pageview tracking.
+ * Hosted analytics, dual deployment:
+ *   - Baidu Tongji          → reliable mainland-China coverage (cookie-based)
+ *   - Cloudflare Web Analytics → global, cookieless
  *
- * Sends one privacy-respecting pageview beacon per page load to our own
- * collector. The decision logic lives in `@/lib/analytics` (unit-tested);
- * this script only supplies live browser values and ships the beacon.
+ * Both are opt-in via build-time env vars; when a token is missing that
+ * provider is simply not injected. A small DNT/GPC gate (see `@/lib/analytics`)
+ * decides whether to load anything at all. No first-party beacon — the provider
+ * scripts handle collection, dashboards, and bot filtering.
+ *
+ * Config (.env / deploy env):
+ *   PUBLIC_BAIDU_ANALYTICS_ID  – the hash in https://hm.baidu.com/hm.js?<id>
+ *   PUBLIC_CF_BEACON_TOKEN     – Cloudflare Web Analytics beacon token
  */
+const baiduId = import.meta.env.PUBLIC_BAIDU_ANALYTICS_ID ?? '';
+const cfToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN ?? '';
+const enabled = Boolean(baiduId || cfToken);
 ---
-<script>
-  import { ANALYTICS_ENDPOINT, buildPageview } from '@/lib/analytics';
+{
+  enabled && (
+    <Fragment>
+      <span id="analytics-config" data-baidu={baiduId} data-cf={cfToken} hidden />
+      <script>
+        import { shouldLoadAnalytics } from '@/lib/analytics';
 
-  function track() {
-    try {
-      // navigator.globalPrivacyControl is not yet in the standard DOM lib types.
-      const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean })
-        .globalPrivacyControl;
-      const pageview = buildPageview({
-        url: location.href,
-        referrer: document.referrer,
-        userAgent: navigator.userAgent,
-        doNotTrack: navigator.doNotTrack,
-        globalPrivacyControl: gpc,
-        language: navigator.language,
-        screenWidth: window.screen?.width,
-        screenHeight: window.screen?.height,
-        viewportWidth: window.innerWidth,
-        viewportHeight: window.innerHeight,
-        timestamp: Date.now(),
-      });
-      if (!pageview) return;
+        const cfg = document.getElementById('analytics-config');
+        const baiduId = cfg?.getAttribute('data-baidu') ?? '';
+        const cfToken = cfg?.getAttribute('data-cf') ?? '';
 
-      const body = JSON.stringify(pageview);
-      // sendBeacon returns false when it cannot enqueue (e.g. payload too
-      // large / queue full); fall back to a keepalive fetch in that case.
-      const queued =
-        typeof navigator.sendBeacon === 'function' &&
-        navigator.sendBeacon(ANALYTICS_ENDPOINT, new Blob([body], { type: 'application/json' }));
-      if (!queued) {
-        void fetch(ANALYTICS_ENDPOINT, {
-          method: 'POST',
-          body,
-          keepalive: true,
-          headers: { 'Content-Type': 'application/json' },
-        });
-      }
-    } catch {
-      /* analytics must never break the page */
-    }
-  }
+        const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean })
+          .globalPrivacyControl;
 
-  track();
-</script>
+        if (shouldLoadAnalytics({ doNotTrack: navigator.doNotTrack, globalPrivacyControl: gpc })) {
+          if (baiduId) {
+            const w = window as unknown as { _hmt?: unknown[] };
+            w._hmt = w._hmt ?? [];
+            const hm = document.createElement('script');
+            hm.async = true;
+            hm.src = 'https://hm.baidu.com/hm.js?' + baiduId;
+            document.head.appendChild(hm);
+          }
+          if (cfToken) {
+            const cf = document.createElement('script');
+            cf.defer = true;
+            cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+            cf.setAttribute('data-cf-beacon', JSON.stringify({ token: cfToken }));
+            document.head.appendChild(cf);
+          }
+        }
+      </script>
+    </Fragment>
+  )
+}

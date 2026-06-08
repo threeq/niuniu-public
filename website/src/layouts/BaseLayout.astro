@@ -4,19 +4,31 @@ import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
 import Header from '@/components/shell/Header.astro';
 import Footer from '@/components/shell/Footer.astro';
 import Analytics from '@/components/Analytics.astro';
+import { organizationSchema, websiteSchema, type JsonLd } from '@/lib/structured-data';
 
 interface Props {
   title?: string;
   description?: string;
+  /** Page-specific JSON-LD appended to the site-wide Organization + WebSite graph. */
+  structuredData?: JsonLd[];
 }
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const lang = locale === 'zh' ? 'zh-CN' : 'en';
-const { title, description } = Astro.props;
+const { title, description, structuredData = [] } = Astro.props;
 const pageTitle = title ?? t(locale, 'site.title');
 const pageDesc = description ?? t(locale, 'site.description');
 const canonical = new URL(Astro.url.pathname, Astro.site).toString();
 const altPath = locale === 'zh' ? localePath('en', Astro.url.pathname) : Astro.url.pathname.replace(/^\/en/, '') || '/';
 const altUrl = new URL(altPath, Astro.site).toString();
+const siteUrl = Astro.site?.origin ?? 'https://www.niu6ai.com';
+const siteName = t(locale, 'brand.name');
+const ogLocale = locale === 'zh' ? 'zh_CN' : 'en_US';
+const ogLocaleAlt = locale === 'zh' ? 'en_US' : 'zh_CN';
+const jsonLdGraph: JsonLd[] = [
+  organizationSchema(siteUrl),
+  websiteSchema(siteUrl, locale),
+  ...structuredData,
+];
 ---
 <!doctype html>
 <html lang={lang}>
@@ -35,7 +47,14 @@ const altUrl = new URL(altPath, Astro.site).toString();
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={new URL('/og.png', Astro.site).toString()} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:locale" content={ogLocale} />
+    <meta property="og:locale:alternate" content={ogLocaleAlt} />
     <meta name="twitter:card" content="summary_large_image" />
+
+    {jsonLdGraph.map((schema) => (
+      <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)} />
+    ))}
 
     <script is:inline>
       (() => {

@@ -1,4 +1,43 @@
 User-agent: *
 Allow: /
 
+# AI / generative-engine crawlers — explicitly allowed so the site can be
+# indexed and cited by AI search (GEO). Remove a block to opt that bot out.
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
 Sitemap: https://www.niu6ai.com/sitemap-index.xml
+LLM: https://www.niu6ai.com/llms.txt

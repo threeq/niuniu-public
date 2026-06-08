@@ -1,0 +1,28 @@
+# 牛牛 Niuniu
+
+> 牛牛（Niuniu）是一款目标驱动、本地优先的 AI 开发工作站：把要做的事写成 issue，多个 Claude Code Agent 自主规划、并行执行、自动验证，跨项目、跨仓库协作，只在真正阻塞时回到你这里确认。提供免费桌面版（macOS / Windows / Linux）与可私有化部署的团队私有版。
+>
+> Niuniu is a goal-driven, local-first AI development workstation: write work as issues, and many Claude Code agents plan, execute in parallel, and self-verify across projects and repos — interrupting you only when truly blocked. Free desktop app (macOS / Windows / Linux) plus a self-hostable team edition.
+
+## 文档 Docs (中文)
+
+- [介绍 Intro](https://www.niu6ai.com/docs/intro): 牛牛是什么、解决什么问题、整体形态。
+- [5 分钟快速开始 Quickstart](https://www.niu6ai.com/docs/quickstart): 安装到跑通第一个目标的最短路径。
+- [核心概念 Concepts](https://www.niu6ai.com/docs/concepts): Workspace、Issue、Agent、Worktree、Harness 流水线等术语。
+- [Kanban 看板](https://www.niu6ai.com/docs/guides/kanban): 用 issue 列与处理阶段驱动 agent 工作。
+- [Agent 集成](https://www.niu6ai.com/docs/guides/agent): PTY 终端与结构化代理两条路径。
+- [Git Worktree 隔离](https://www.niu6ai.com/docs/guides/worktree): 每个 workspace 独立 worktree、并行互不干扰。
+- [外部集成 External integration](https://www.niu6ai.com/docs/guides/external-integration): 接入外部 API 与数据源。
+- [故障排查 FAQ](https://www.niu6ai.com/docs/faq): 常见问题与排查。
+
+## 安装 Install
+
+- [桌面版（个人）Personal desktop](https://www.niu6ai.com/docs/install/personal): 单机本地、三平台、零依赖。
+- [团队私有版 Self-hosted](https://www.niu6ai.com/docs/install/self-hosted): docker compose 一键私有化部署。
+
+## 其他 Other
+
+- [定价 Pricing](https://www.niu6ai.com/pricing): 桌面版免费；团队私有版年度许可。
+- [更新日志 Changelog](https://www.niu6ai.com/changelog): 桌面 app 各版本发布说明。
+- [English docs](https://www.niu6ai.com/en/docs/intro)
+- [GitHub](https://github.com/threeq/niuniu-public)

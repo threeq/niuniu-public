@@ -42,24 +42,43 @@ the host as part of `--services=caddy` (or implicitly via `--services=all`).
 
 ## Analytics (访问量跟踪统计)
 
-First-party, privacy-respecting pageview tracking. No third-party scripts.
+Hosted analytics, **dual deployment** — no self-hosted backend:
 
-- Decision + payload logic: `src/lib/analytics.ts` (pure, unit-tested in
-  `tests/analytics.test.ts`).
-- Browser glue: `src/components/Analytics.astro`, included once in
-  `BaseLayout.astro`. On each page load it builds a pageview and sends it via
-  `navigator.sendBeacon` (falling back to `fetch(..., {keepalive})`).
-- It honors Do Not Track **and Global Privacy Control (GPC)**, skips bots/crawlers,
-  and skips non-production hosts (localhost, loopback, `*.local`), so no beacon
-  fires during local dev or e2e.
-- The beacon `POST`s JSON `{path, locale, referrer, language, screen, viewport, ts}`
-  to `ANALYTICS_ENDPOINT` (`/api/collect`). `ts` is the client clock and is
-  untrusted — the collector should stamp its own receive time for aggregation.
+- **Baidu Tongji** — reliable mainland-China coverage (cookie-based).
+- **Cloudflare Web Analytics** — global, cookieless.
 
-> ⚠️ **Deploy prerequisite:** the static build only *emits* beacons. Wire up
-> `/api/collect` on the edge proxy (route → collector) **before** going live,
-> otherwise every real pageview POSTs to a 404. Counts pageviews (PV), not unique
-> visitors (no cookie / persistent ID); derive UV server-side if needed.
+Both are injected by `src/components/Analytics.astro` (included once in
+`BaseLayout.astro`), opt-in via env vars. A small DNT/GPC gate
+(`src/lib/analytics.ts`, unit-tested) decides whether to load anything — Baidu
+sets cookies and ignores DNT on its own, so we gate it ourselves. There is **no
+first-party beacon**; the providers handle collection, dashboards, and bot
+filtering. Counts pageviews (PV); for unique visitors use each provider's panel.
+
+Configure (copy `.env.example` → `.env`, or set in the deploy env):
+
+```bash
+PUBLIC_BAIDU_ANALYTICS_ID=   # hash in https://hm.baidu.com/hm.js?<id>
+PUBLIC_CF_BEACON_TOKEN=      # Cloudflare Web Analytics beacon token
+```
+
+> ⚠️ A provider with no token is simply not loaded (so local dev / e2e stay
+> clean). **Register the site on each platform and fill in the tokens before
+> the data shows up.**
+
+## SEO / GEO
+
+Tuned for Google rich results and generative-engine (AI search) citation:
+
+- **JSON-LD** (`src/lib/structured-data.ts`, unit-tested): site-wide
+  `Organization` + `WebSite` in `BaseLayout`; `SoftwareApplication` on pricing;
+  `TechArticle` + `BreadcrumbList` on doc pages.
+- **OpenGraph**: `og:site_name` / `og:locale` (+ alternate) alongside the
+  existing title/description/image and `hreflang` links.
+- **`public/robots.txt`**: explicitly allows AI crawlers (GPTBot, ClaudeBot,
+  PerplexityBot, Google-Extended, CCBot, …). Remove a block to opt one out.
+- **`public/llms.txt`**: an [llmstxt.org](https://llmstxt.org) site summary +
+  curated links for LLMs.
+- **Sitemap** `i18n` config emits `hreflang` alternates between zh / en.
 
 ## Adding a doc page
 

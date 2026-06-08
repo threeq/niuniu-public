@@ -17,7 +17,16 @@ export default defineConfig({
     locales: ['zh', 'en'],
     routing: { prefixDefaultLocale: false },
   },
-  integrations: [mdx(), react(), sitemap()],
+  integrations: [
+    mdx(),
+    react(),
+    sitemap({
+      i18n: {
+        defaultLocale: 'zh',
+        locales: { zh: 'zh-CN', en: 'en-US' },
+      },
+    }),
+  ],
   vite: {
     plugins: [tailwindcss()],
     resolve: {
