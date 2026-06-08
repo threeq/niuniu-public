@@ -27,9 +27,12 @@
       if (!pageview) return;
 
       const body = JSON.stringify(pageview);
-      if (typeof navigator.sendBeacon === 'function') {
+      // sendBeacon returns false when it cannot enqueue (e.g. payload too
+      // large / queue full); fall back to a keepalive fetch in that case.
+      const queued =
+        typeof navigator.sendBeacon === 'function' &&
         navigator.sendBeacon(ANALYTICS_ENDPOINT, new Blob([body], { type: 'application/json' }));
-      } else {
+      if (!queued) {
         void fetch(ANALYTICS_ENDPOINT, {
           method: 'POST',
           body,
