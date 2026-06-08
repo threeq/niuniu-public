@@ -54,6 +54,9 @@ describe('classifyReferrer', () => {
   it('returns "internal" for a same-origin referrer', () => {
     expect(classifyReferrer(`${SITE_ORIGIN}/pricing`, SITE_ORIGIN)).toBe('internal');
   });
+  it('treats a same-host referrer over a different scheme as internal', () => {
+    expect(classifyReferrer('http://www.niu6ai.com/pricing', SITE_ORIGIN)).toBe('internal');
+  });
   it('returns the bare host for an external referrer', () => {
     expect(classifyReferrer('https://www.google.com/search?q=niuniu', SITE_ORIGIN)).toBe(
       'www.google.com',
@@ -107,6 +110,12 @@ describe('shouldTrack', () => {
   });
   it('honors Do Not Track ("yes")', () => {
     expect(shouldTrack(ctx({ doNotTrack: 'yes' }))).toBe(false);
+  });
+  it('honors Global Privacy Control', () => {
+    expect(shouldTrack(ctx({ globalPrivacyControl: true }))).toBe(false);
+  });
+  it('tracks when GPC is explicitly false', () => {
+    expect(shouldTrack(ctx({ globalPrivacyControl: false }))).toBe(true);
   });
   it('skips bots', () => {
     expect(shouldTrack(ctx({ userAgent: 'Googlebot/2.1' }))).toBe(false);

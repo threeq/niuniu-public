@@ -12,11 +12,15 @@
 
   function track() {
     try {
+      // navigator.globalPrivacyControl is not yet in the standard DOM lib types.
+      const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean })
+        .globalPrivacyControl;
       const pageview = buildPageview({
         url: location.href,
         referrer: document.referrer,
         userAgent: navigator.userAgent,
         doNotTrack: navigator.doNotTrack,
+        globalPrivacyControl: gpc,
         language: navigator.language,
         screenWidth: window.screen?.width,
         screenHeight: window.screen?.height,

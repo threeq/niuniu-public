@@ -3,7 +3,7 @@ import { getLocaleFromUrl, type Locale } from '@/lib/i18n';
 /**
  * First-party, privacy-respecting pageview tracking.
  *
- * The website is a static Astro build served from our own nginx host, so we
+ * The website is a static Astro build served from our own host, so we
  * collect traffic ourselves instead of embedding a third-party analytics
  * script. This module holds the pure logic — deciding whether a visit is
  * trackable and shaping the pageview payload — so it can be unit-tested
@@ -12,7 +12,13 @@ import { getLocaleFromUrl, type Locale } from '@/lib/i18n';
  * beacons the result to {@link ANALYTICS_ENDPOINT}.
  */
 
-/** First-party collector endpoint. Wired up server-side (nginx) on the host. */
+/**
+ * First-party collector endpoint (same-origin).
+ *
+ * ⚠️ Deploy dependency: the static build only *emits* beacons here. The edge
+ * proxy MUST route this path to a collector before going live — otherwise real
+ * visits POST to a 404. See website/README.md.
+ */
 export const ANALYTICS_ENDPOINT = '/api/collect';
 
 /** Inputs gathered from the browser, kept explicit so the logic stays pure. */
@@ -25,6 +31,8 @@ export interface TrackContext {
   userAgent: string;
   /** `navigator.doNotTrack` (may be null/undefined). */
   doNotTrack?: string | null;
+  /** `navigator.globalPrivacyControl` — the GPC opt-out signal (CCPA et al.). */
+  globalPrivacyControl?: boolean;
   /** `navigator.language`. */
   language?: string;
   screenWidth?: number;
@@ -42,10 +50,12 @@ export interface Pageview {
   /** "direct" | "internal" | external host (e.g. "news.ycombinator.com"). */
   referrer: string;
   language: string;
-  /** "WIDTHxHEIGHT" of the physical screen, or "" when unavailable. */
+  /** "WIDTHxHEIGHT" of the screen in CSS pixels, or "" when unavailable. */
   screen: string;
   /** "WIDTHxHEIGHT" of the viewport, or "" when unavailable. */
   viewport: string;
+  /** Client clock (ms since epoch). Untrusted — the collector should stamp its
+   *  own receive time for aggregation; this is informational only. */
   ts: number;
 }
 
@@ -63,13 +73,14 @@ export function normalizePath(pathname: string): string {
 
 /**
  * Reduce a referrer to a coarse, non-identifying category: "direct" when
- * absent or unparseable, "internal" for same-origin, otherwise the bare host.
+ * absent or unparseable, "internal" for same-site (same hostname, so http/https
+ * both count), otherwise the bare host.
  */
 export function classifyReferrer(referrer: string, currentOrigin: string): string {
   if (!referrer) return 'direct';
   try {
     const ref = new URL(referrer);
-    return ref.origin === currentOrigin ? 'internal' : ref.host;
+    return ref.hostname === new URL(currentOrigin).hostname ? 'internal' : ref.host;
   } catch {
     return 'direct';
   }
@@ -96,8 +107,9 @@ function hostnameFromUrl(url: string): string {
   }
 }
 
-/** Whether a visit should be recorded, honoring DNT, bots, and local hosts. */
+/** Whether a visit should be recorded, honoring DNT/GPC, bots, and local hosts. */
 export function shouldTrack(ctx: TrackContext): boolean {
+  if (ctx.globalPrivacyControl === true) return false;
   const dnt = ctx.doNotTrack;
   if (dnt === '1' || dnt === 'yes') return false;
   if (isBot(ctx.userAgent)) return false;

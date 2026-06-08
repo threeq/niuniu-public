@@ -49,12 +49,17 @@ First-party, privacy-respecting pageview tracking. No third-party scripts.
 - Browser glue: `src/components/Analytics.astro`, included once in
   `BaseLayout.astro`. On each page load it builds a pageview and sends it via
   `navigator.sendBeacon` (falling back to `fetch(..., {keepalive})`).
-- It honors Do Not Track, skips bots/crawlers, and skips non-production hosts
-  (localhost, loopback, `*.local`), so no beacon fires during local dev or e2e.
+- It honors Do Not Track **and Global Privacy Control (GPC)**, skips bots/crawlers,
+  and skips non-production hosts (localhost, loopback, `*.local`), so no beacon
+  fires during local dev or e2e.
 - The beacon `POST`s JSON `{path, locale, referrer, language, screen, viewport, ts}`
-  to `ANALYTICS_ENDPOINT` (`/api/collect`). **This is a same-origin path that the
-  edge proxy must route to a collector** (the static build itself only emits the
-  beacon — wire up `/api/collect` on the host to persist/aggregate the events).
+  to `ANALYTICS_ENDPOINT` (`/api/collect`). `ts` is the client clock and is
+  untrusted — the collector should stamp its own receive time for aggregation.
+
+> ⚠️ **Deploy prerequisite:** the static build only *emits* beacons. Wire up
+> `/api/collect` on the edge proxy (route → collector) **before** going live,
+> otherwise every real pageview POSTs to a 404. Counts pageviews (PV), not unique
+> visitors (no cookie / persistent ID); derive UV server-side if needed.
 
 ## Adding a doc page
 
