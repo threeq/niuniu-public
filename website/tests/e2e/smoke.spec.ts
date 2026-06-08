@@ -2,15 +2,15 @@ import { expect, test } from '@playwright/test';
 
 test('homepage zh renders with hero + sections', async ({ page }) => {
   await page.goto('/');
-  await expect(page).toHaveTitle(/niuniu/);
-  await expect(page.locator('h1')).toContainText(/AI|并行/);
+  await expect(page).toHaveTitle(/牛牛/);
+  await expect(page.locator('h1')).toContainText(/AI|并行|目标/);
   // Target only the header nav link, not footer or CTA links
   await expect(page.locator('header').getByRole('link', { name: '文档', exact: true })).toBeVisible();
 });
 
 test('homepage en renders with hero', async ({ page }) => {
   await page.goto('/en');
-  await expect(page.locator('h1')).toContainText('parallel', { ignoreCase: true });
+  await expect(page.locator('h1')).toContainText('finish it', { ignoreCase: true });
   await expect(page.locator('header').getByRole('link', { name: 'Docs', exact: true })).toBeVisible();
 });
 
@@ -19,7 +19,7 @@ test('language switch zh → en', async ({ page }) => {
   // LangSwitch renders as <a aria-label="语言">EN</a> — match by text content
   await page.locator('header').getByText('EN', { exact: true }).click();
   await expect(page).toHaveURL(/\/en/);
-  await expect(page.locator('h1')).toContainText('parallel', { ignoreCase: true });
+  await expect(page.locator('h1')).toContainText('finish it', { ignoreCase: true });
 });
 
 test('theme toggle adds dark class', async ({ page }) => {

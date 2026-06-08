@@ -40,6 +40,22 @@ config (vhosts, bind-mount) lives in `relay/deploy/Caddyfile` and
 `relay/deploy/docker-compose.yml`; both are version-controlled and synced to
 the host as part of `--services=caddy` (or implicitly via `--services=all`).
 
+## Analytics (访问量跟踪统计)
+
+First-party, privacy-respecting pageview tracking. No third-party scripts.
+
+- Decision + payload logic: `src/lib/analytics.ts` (pure, unit-tested in
+  `tests/analytics.test.ts`).
+- Browser glue: `src/components/Analytics.astro`, included once in
+  `BaseLayout.astro`. On each page load it builds a pageview and sends it via
+  `navigator.sendBeacon` (falling back to `fetch(..., {keepalive})`).
+- It honors Do Not Track, skips bots/crawlers, and skips non-production hosts
+  (localhost, loopback, `*.local`), so no beacon fires during local dev or e2e.
+- The beacon `POST`s JSON `{path, locale, referrer, language, screen, viewport, ts}`
+  to `ANALYTICS_ENDPOINT` (`/api/collect`). **This is a same-origin path that the
+  edge proxy must route to a collector** (the static build itself only emits the
+  beacon — wire up `/api/collect` on the host to persist/aggregate the events).
+
 ## Adding a doc page
 
 1. Create `src/content/docs-zh/<slug>.mdx` with frontmatter:

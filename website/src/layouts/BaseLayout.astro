@@ -3,6 +3,7 @@ import "@/styles/global.css";
 import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
 import Header from '@/components/shell/Header.astro';
 import Footer from '@/components/shell/Footer.astro';
+import Analytics from '@/components/Analytics.astro';
 
 interface Props {
   title?: string;
@@ -53,5 +54,6 @@ const altUrl = new URL(altPath, Astro.site).toString();
       <slot />
     </main>
     <Footer />
+    <Analytics />
   </body>
 </html>

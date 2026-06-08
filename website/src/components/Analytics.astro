@@ -1,0 +1,46 @@
+---
+/**
+ * First-party pageview tracking.
+ *
+ * Sends one privacy-respecting pageview beacon per page load to our own
+ * collector. The decision logic lives in `@/lib/analytics` (unit-tested);
+ * this script only supplies live browser values and ships the beacon.
+ */
+---
+<script>
+  import { ANALYTICS_ENDPOINT, buildPageview } from '@/lib/analytics';
+
+  function track() {
+    try {
+      const pageview = buildPageview({
+        url: location.href,
+        referrer: document.referrer,
+        userAgent: navigator.userAgent,
+        doNotTrack: navigator.doNotTrack,
+        language: navigator.language,
+        screenWidth: window.screen?.width,
+        screenHeight: window.screen?.height,
+        viewportWidth: window.innerWidth,
+        viewportHeight: window.innerHeight,
+        timestamp: Date.now(),
+      });
+      if (!pageview) return;
+
+      const body = JSON.stringify(pageview);
+      if (typeof navigator.sendBeacon === 'function') {
+        navigator.sendBeacon(ANALYTICS_ENDPOINT, new Blob([body], { type: 'application/json' }));
+      } else {
+        void fetch(ANALYTICS_ENDPOINT, {
+          method: 'POST',
+          body,
+          keepalive: true,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }
+    } catch {
+      /* analytics must never break the page */
+    }
+  }
+
+  track();
+</script>
