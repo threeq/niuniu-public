@@ -31,7 +31,13 @@ const enabled = Boolean(baiduId || cfToken);
         const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean })
           .globalPrivacyControl;
 
-        if (shouldLoadAnalytics({ doNotTrack: navigator.doNotTrack, globalPrivacyControl: gpc })) {
+        if (
+          shouldLoadAnalytics({
+            hostname: location.hostname,
+            doNotTrack: navigator.doNotTrack,
+            globalPrivacyControl: gpc,
+          })
+        ) {
           if (baiduId) {
             const w = window as unknown as { _hmt?: unknown[] };
             w._hmt = w._hmt ?? [];
