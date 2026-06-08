@@ -1,0 +1,54 @@
+---
+/**
+ * Hosted analytics, dual deployment:
+ *   - Baidu Tongji          → reliable mainland-China coverage (cookie-based)
+ *   - Cloudflare Web Analytics → global, cookieless
+ *
+ * Both are opt-in via build-time env vars; when a token is missing that
+ * provider is simply not injected. A small DNT/GPC gate (see `@/lib/analytics`)
+ * decides whether to load anything at all. No first-party beacon — the provider
+ * scripts handle collection, dashboards, and bot filtering.
+ *
+ * Config (.env / deploy env):
+ *   PUBLIC_BAIDU_ANALYTICS_ID  – the hash in https://hm.baidu.com/hm.js?<id>
+ *   PUBLIC_CF_BEACON_TOKEN     – Cloudflare Web Analytics beacon token
+ */
+const baiduId = import.meta.env.PUBLIC_BAIDU_ANALYTICS_ID ?? '';
+const cfToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN ?? '';
+const enabled = Boolean(baiduId || cfToken);
+---
+{
+  enabled && (
+    <Fragment>
+      <span id="analytics-config" data-baidu={baiduId} data-cf={cfToken} hidden />
+      <script>
+        import { shouldLoadAnalytics } from '@/lib/analytics';
+
+        const cfg = document.getElementById('analytics-config');
+        const baiduId = cfg?.getAttribute('data-baidu') ?? '';
+        const cfToken = cfg?.getAttribute('data-cf') ?? '';
+
+        const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean })
+          .globalPrivacyControl;
+
+        if (shouldLoadAnalytics({ doNotTrack: navigator.doNotTrack, globalPrivacyControl: gpc })) {
+          if (baiduId) {
+            const w = window as unknown as { _hmt?: unknown[] };
+            w._hmt = w._hmt ?? [];
+            const hm = document.createElement('script');
+            hm.async = true;
+            hm.src = 'https://hm.baidu.com/hm.js?' + baiduId;
+            document.head.appendChild(hm);
+          }
+          if (cfToken) {
+            const cf = document.createElement('script');
+            cf.defer = true;
+            cf.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+            cf.setAttribute('data-cf-beacon', JSON.stringify({ token: cfToken }));
+            document.head.appendChild(cf);
+          }
+        }
+      </script>
+    </Fragment>
+  )
+}

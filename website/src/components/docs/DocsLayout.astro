@@ -5,7 +5,8 @@ import TableOfContents from './TableOfContents.astro';
 import Breadcrumb from './Breadcrumb.astro';
 import PrevNext from './PrevNext.astro';
 import { findPrevNext, getDocsForLocale } from '@/lib/docs-nav';
-import { getLocaleFromUrl, t, type Locale } from '@/lib/i18n';
+import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
+import { breadcrumbSchema, techArticleSchema } from '@/lib/structured-data';
 import type { MarkdownHeading } from 'astro';
 
 interface Props {
@@ -20,9 +21,19 @@ const { currentSlug, title, description, group, headings, editPath } = Astro.pro
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const docs = await getDocsForLocale(locale);
 const { prev, next } = findPrevNext(docs, currentSlug);
-const editUrl = `https://github.com/niuniu-dev/niuniu/edit/main/${editPath}`;
+const editUrl = `https://github.com/threeq/niuniu-public/edit/main/${editPath}`;
+const siteUrl = Astro.site?.origin ?? 'https://www.niu6ai.com';
+const canonical = new URL(Astro.url.pathname, Astro.site).toString();
+const structuredData = [
+  techArticleSchema({ siteUrl, url: canonical, title, description, locale }),
+  breadcrumbSchema([
+    { name: t(locale, 'brand.name'), url: new URL(localePath(locale, '/'), Astro.site).toString() },
+    { name: t(locale, 'nav.docs'), url: new URL(localePath(locale, '/docs/intro'), Astro.site).toString() },
+    { name: title, url: canonical },
+  ]),
+];
 ---
-<BaseLayout title={`${title} · ${t(locale, 'brand.name')}`} description={description}>
+<BaseLayout title={`${title} · ${t(locale, 'brand.name')}`} description={description} structuredData={structuredData}>
   <div class="container-doc flex gap-8">
     <Sidebar currentSlug={currentSlug} />
     <article class="flex-1 min-w-0 py-8 max-w-3xl" data-pagefind-filter={`lang:${locale}`}>
