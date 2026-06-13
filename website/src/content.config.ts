@@ -4,7 +4,7 @@ import { glob } from 'astro/loaders';
 const docSchema = z.object({
   title: z.string(),
   description: z.string().optional(),
-  group: z.enum(['intro', 'install', 'concepts', 'guides', 'faq']),
+  group: z.enum(['intro', 'install', 'concepts', 'guides', 'faq', 'privacy']),
   order: z.number(),
   draft: z.boolean().default(false),
 });
