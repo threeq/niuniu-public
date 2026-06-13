@@ -3,7 +3,7 @@ import type { Locale } from './i18n';
 
 export type DocEntry = CollectionEntry<'docs-zh'> | CollectionEntry<'docs-en'>;
 
-const groupOrder = ['intro', 'install', 'concepts', 'guides', 'faq'] as const;
+const groupOrder = ['intro', 'install', 'concepts', 'guides', 'faq', 'privacy'] as const;
 
 export async function getDocsForLocale(locale: Locale): Promise<DocEntry[]> {
   const collection = locale === 'zh' ? 'docs-zh' : 'docs-en';

@@ -1,0 +1,89 @@
+---
+title: Telemetry & Privacy
+description: What the Personal edition's anonymous "open event" collects, what it never collects, how long it's kept, and how to turn it off or request deletion. The Self-Hosted Team edition never reports.
+group: privacy
+order: 1
+---
+
+The Niuniu Personal edition is local-first and network-isolated by default (bound to `127.0.0.1`, no account system), so we have no way of knowing how many people actually use it. To measure **active users, version spread, OS distribution, and retention**, the Personal edition sends a single **anonymous "open event"** on startup — nothing more.
+
+This page lists exactly what is collected, what is never collected, and how to turn it off with one click. That transparency is what makes the **opt-out** design (on by default, off whenever you want) legitimate.
+
+> **Scope**: applies only to the **Personal edition / self-hosted single-user instances**. The vendor-hosted **Self-Hosted Team edition never enables this telemetry** — see [Scope](#scope) below.
+
+## What is collected (minimal set — 6 fields only)
+
+Each "open event" contains **only** the following fields, nothing else:
+
+| Field | Meaning | Notes |
+|-------|---------|-------|
+| `install_id` | Anonymous install ID | A random UUID generated on first launch — **not an account, not a device serial** |
+| `machine_fp_hash` | Machine fingerprint hash | The machine fingerprint run through a fixed-salt **SHA-256 hash** — **not the raw hardware ID**; used only to dedupe "same machine reinstalled" |
+| `version` | App version | For version-distribution stats |
+| `os` | Operating system | e.g. `windows` / `darwin` / `linux` |
+| `arch` | CPU architecture | e.g. `amd64` / `arm64` |
+| `opened_at` | Open time | An RFC3339 timestamp |
+
+The server validates strictly: **any unknown field, any field that looks like PII, and any usage metric is rejected.**
+
+## What is never collected
+
+Niuniu will **never** collect any of the following through this telemetry:
+
+- **Accounts, emails, or any PII** (the Personal edition has no account system; this endpoint is fully anonymous).
+- **Tokens, workload, project counts, or any usage aggregate** — how many tokens you spent, how many workspaces you ran, how many issues / projects you created.
+- **Repository paths or file names.**
+- **Issue / prompt / conversation content.**
+- **Plaintext tokens.**
+- **Raw hardware IDs** (only a salted hash is sent, never the raw fingerprint).
+- **Precise IP-based profiling** (IP is used only for anonymous rate limiting, never to build a profile).
+
+## How it's used
+
+The minimal fields are used **only** for the following stats, nothing else:
+
+- **DAU / WAU / MAU** (deduped per day by `install_id` at query time);
+- **Version distribution** (`version`);
+- **OS distribution** (`os` / `arch`);
+- **Retention curves.**
+
+`machine_fp_hash` is used at analysis time only to merge "multiple reinstalls of the same machine," so a reinstall isn't double-counted as a new install.
+
+## How reporting works
+
+- **Trigger**: an "open ping" is sent ~10 seconds after the app starts; a keep-alive heartbeat (same fields) is sent every **24 hours** while running, so a long-lived session counts exactly one active day per day.
+- **Anonymous**: requests carry no account credentials.
+- **Rate-limited**: limited per source IP, with a request-body size cap.
+- **Best-effort**: on failure it retries silently a few times and then gives up — it **never blocks the main flow and never spams error logs**.
+
+## Retention
+
+- **Raw events are kept for 90 days**, then automatically cleaned up.
+- **Daily aggregates are kept long-term** (aggregates contain no detail that can be traced back to a single open).
+
+## How to turn it off
+
+This telemetry is opt-out and can be disabled anytime via **either** of the following:
+
+1. **The "Anonymous usage stats" toggle under Settings → Privacy** (recommended). Once off, reporting **stops on the next heartbeat cycle — no restart needed**.
+2. **Edit the config file** `~/.niuniu/config.yaml` directly:
+
+   ```yaml
+   telemetry:
+     enabled: false   # default is true (opt-out)
+   ```
+
+### Scope
+
+| Instance type | Reports? |
+|---------------|----------|
+| Personal / self-hosted single-user | Yes (controlled by the "Anonymous usage stats" toggle, on by default) |
+| Vendor-hosted Self-Hosted Team | **No** (the telemetry component never starts; nothing to turn off) |
+
+## How to request deletion
+
+Because this telemetry is **fully anonymous** (no account, no email), the only identifier that can locate your data is your `install_id`.
+
+- You can find your `install_id` under **Settings → Privacy**, or in the `server.id` field of `~/.niuniu/config.yaml`.
+- To delete raw events tied to that `install_id`, submit a deletion request with the `install_id` via the [official website](https://www.niu6ai.com) or a [public-repo issue](https://github.com/threeq/niuniu-public/issues).
+- Even without a request, raw events are automatically cleaned up after **90 days** per the retention policy.
