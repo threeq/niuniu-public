@@ -1,0 +1,5 @@
+# Shell scripts must keep LF endings on every platform: deploy.sh pipes
+# scripts/server-build.sh to the Linux host verbatim, and a CRLF shebang
+# (`#!/usr/bin/env bash\r`) would break execution there.
+*.sh text eol=lf
+deploy.sh text eol=lf
