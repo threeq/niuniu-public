@@ -20,25 +20,49 @@ make dev-website       # http://localhost:4321
 
 ## Build & test
 
+Run from the repo root (each target `cd`s into `website/`):
+
 ```bash
-make build-website     # outputs to website/dist/
-make check-website     # type-check + i18n parity
-make test-website      # vitest + playwright
+make build     # pnpm install --frozen-lockfile && pnpm build -> website/dist/
+make check     # type-check + i18n parity
+make test      # vitest + playwright
 ```
 
 ## Deploy
 
-The website ships through the unified deploy script at the repo root:
+The site is **static** (built HTML served by Caddy from `dist/`) with **no CI**,
+so it only updates when someone rebuilds and re-syncs `dist/`. `deploy.sh` at the
+repo root has two modes:
 
 ```bash
-bash deploy.sh --services=website        # build + rsync dist + verify URLs
-bash deploy.sh --services=website --skip-website-build  # rsync existing dist/
+bash deploy.sh                  # LOCAL build: pnpm build here, rsync dist/ to the host
+bash deploy.sh --skip-build     # local mode, reuse existing website/dist/
+bash deploy.sh --remote-build   # REMOTE build: git pull + pnpm build ON the host, atomic-swap dist/
 ```
 
-See `deploy.sh --help` for the full list of services and options. Caddy
-config (vhosts, bind-mount) lives in `relay/deploy/Caddyfile` and
-`relay/deploy/docker-compose.yml`; both are version-controlled and synced to
-the host as part of `--services=caddy` (or implicitly via `--services=all`).
+`--remote-build` needs no local Node/pnpm — it runs `scripts/server-build.sh` on
+the host (Node via nvm + corepack pnpm; checkout under `apps/niuniu-website/repo`).
+Override with env `TARGET_HOST`, `REMOTE_REF`, `REMOTE_REPO_DIR`, `REPO_URL`.
+See `deploy.sh --help` for all options.
+
+### Release / changelog auto-publish
+
+`/changelog` is generated at **build time**: `src/lib/changelog.ts` fetches the
+GitHub Releases API once per Astro build and bakes it into static HTML. There is
+no runtime fetch, so **publishing a new GitHub release does not update the live
+site by itself** — the site must be rebuilt.
+
+To make releases land automatically, install the auto-publish cron (runs the
+server-side build on a schedule and skips when nothing changed):
+
+```bash
+bash deploy.sh --remote-build --install-cron   # publish now + wire up the cron
+bash deploy.sh --install-cron                   # only (re)install/refresh the cron
+bash deploy.sh --install-cron --cron-schedule='*/30 * * * *'   # custom timing
+```
+
+The cron logs to `~/apps/niuniu-website/build.log` on the host; it rebuilds only
+when the latest release tag or the `main` HEAD changed since the last publish.
 
 ## Analytics (访问量跟踪统计)
 
