@@ -1,0 +1,49 @@
+---
+import { getLocaleFromUrl, t, type Locale } from '@/lib/i18n';
+import zh from '@/i18n/zh.json';
+import en from '@/i18n/en.json';
+const locale: Locale = getLocaleFromUrl(Astro.url);
+const dict = locale === 'zh' ? zh : en;
+const rows = dict.comparison.rows as { label: string; niuniu: string; others: string }[];
+---
+<section class="container-page py-20">
+  <div class="text-center max-w-2xl mx-auto">
+    <p class="text-xs font-semibold uppercase tracking-wider text-[rgb(var(--color-primary))]">
+      {t(locale, 'comparison.section_eyebrow')}
+    </p>
+    <h2 class="mt-3 text-3xl md:text-4xl font-bold">{t(locale, 'comparison.section_title')}</h2>
+    <p class="mt-4 text-[rgb(var(--color-muted))]">{t(locale, 'comparison.section_subtitle')}</p>
+  </div>
+
+  <div class="mt-12 overflow-x-auto rounded-2xl border border-[rgb(var(--color-border))]">
+    <table class="w-full text-sm min-w-[40rem]">
+      <thead>
+        <tr class="bg-[rgb(var(--color-card))]">
+          <th class="text-left p-4 font-semibold w-1/4"></th>
+          <th class="p-4 font-bold text-[rgb(var(--color-primary))] bg-[rgb(var(--color-primary))]/5 border-x-2 border-[rgb(var(--color-primary))]/30">
+            {t(locale, 'comparison.col_niuniu')}
+          </th>
+          <th class="p-4 font-semibold text-[rgb(var(--color-muted))]">
+            {t(locale, 'comparison.col_others')}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr class="border-t border-[rgb(var(--color-border))] align-top">
+            <td class="p-4 font-medium">{r.label}</td>
+            <td class="p-4 bg-[rgb(var(--color-primary))]/5 border-x-2 border-[rgb(var(--color-primary))]/30">
+              <span class="inline-flex gap-2">
+                <span class="text-[rgb(var(--color-primary))] shrink-0" aria-hidden="true">✓</span>
+                <span>{r.niuniu}</span>
+              </span>
+            </td>
+            <td class="p-4 text-[rgb(var(--color-muted))]">{r.others}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+
+  <p class="mt-6 text-center text-sm text-[rgb(var(--color-muted))]">{t(locale, 'comparison.footnote')}</p>
+</section>

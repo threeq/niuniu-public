@@ -58,13 +58,55 @@
       { "title": "Parallel workspaces", "desc": "One workspace = one git worktree + isolated agent session. Many run in parallel without stepping on each other." },
       { "title": "Built-in kanban", "desc": "Issues, checklists, comments, timeline — all in one place." },
       { "title": "Dual agent paths", "desc": "PTY terminal or structured proxy — pick what fits the task." },
-      { "title": "Harness pipelines", "desc": "spec → plan → impl → test, automated, gated, observable." },
+      { "title": "Harness orchestration", "desc": "AI auto-selects the flow from your kanban stages (implement / AI review / human review / done) — automated, gated, observable." },
       { "title": "MCP-native", "desc": "Claude Code reads Niuniu state directly via MCP." }
     ]
   },
   "screenshot": {
     "alt": "Niuniu dashboard screenshot",
     "caption": "One workstation. Many parallel AI Agent sessions."
+  },
+  "demo": {
+    "section_eyebrow": "Live demo",
+    "section_title": "Many agents, running in parallel",
+    "section_subtitle": "Turn single-session Claude Code's “one chat you drive” into many workspaces driving many agents at once — each picking its own flow from your kanban stages, looping autonomously.",
+    "alt": "Niuniu demo animation: 3 workspaces each running an agent, each picking its own kanban stages, looping autonomously in parallel",
+    "caption": "3 workspaces, each driving one issue; agents advance in parallel, fully isolated, finishing on their own.",
+    "note": "Illustrative animation (not a screen capture of the desktop app), shown to convey the parallel scheduling model."
+  },
+  "comparison": {
+    "section_eyebrow": "Why Niuniu",
+    "section_title": "Niuniu vs single-session Claude Code / Cursor",
+    "section_subtitle": "Claude Code / Cursor — even with parallel subagents — is still one session you drive; Niuniu is the workstation that schedules many independent workspaces, each with its own team of agents, from a board.",
+    "col_niuniu": "🐮 Niuniu",
+    "col_others": "Single-session Claude Code / Cursor",
+    "footnote": "Comparison reflects publicly available product behavior and is for reference only.",
+    "rows": [
+      { "label": "Unit of work", "niuniu": "A goal / issue", "others": "A single conversation" },
+      { "label": "Concurrency", "niuniu": "Many workspaces running many agents in parallel", "others": "One session you drive, can spawn parallel subagents" },
+      { "label": "Isolation", "niuniu": "Each workspace gets its own git worktree + session — no stepping on each other", "others": "Shared workspace, easy to collide" },
+      { "label": "Autonomy", "niuniu": "Plans → executes → verifies on its own; pings you only when blocked", "others": "You drive every step" },
+      { "label": "Cross-project / repo", "niuniu": "Native, scheduled from one kanban board", "others": "Manual context switching" },
+      { "label": "Progress tracking", "niuniu": "Built-in kanban: issues / checklists / comments / timeline", "others": "Scattered across chat history" },
+      { "label": "Execution flow", "niuniu": "AI auto-selects the flow from your kanban stages (implement / AI review / human review / done)", "others": "Fixed manual steps" },
+      { "label": "State access", "niuniu": "Claude Code reads Niuniu context directly over MCP", "others": "None" }
+    ]
+  },
+  "social_proof": {
+    "section_eyebrow": "Community & traction",
+    "section_title": "Developers are shipping in parallel with Niuniu",
+    "section_subtitle": "Open source, local-first, actively iterating — follow the real progress on GitHub.",
+    "stats": [
+      { "value": "MIT", "label": "Open-source license, public code" },
+      { "value": "3", "label": "Platforms · macOS / Windows / Linux" },
+      { "value": "100%", "label": "Local-first · data stays on your machine by default" },
+      { "value": "∞", "label": "Unlimited workspaces" }
+    ],
+    "testimonials": [
+      { "quote": "Single-session Claude Code only let me watch one task at a time. With three workspaces running at once I ship roughly twice as much before end of day.", "author": "Indie developer", "role": "Full-stack · SaaS side project" },
+      { "quote": "One git worktree per workspace means agents never step on each other — parallel refactors no longer risk breaking someone else's branch.", "author": "Backend engineer", "role": "Mid-size dev team" },
+      { "quote": "The self-hosted team edition runs on our own machines, so code never leaves the network. Our compliance team finally signed off.", "author": "Engineering lead", "role": "Fintech startup" }
+    ]
   },
   "bottom_cta": {
     "headline": "Ready to get started?",

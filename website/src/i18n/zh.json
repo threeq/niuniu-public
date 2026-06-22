@@ -58,13 +58,55 @@
       { "title": "多 Workspace 并行", "desc": "每个 workspace 一个 git worktree + 独立 agent 会话，互不干扰，多任务同时推进。" },
       { "title": "Kanban 项目管理", "desc": "Issues / Checklists / Comments / Timeline 一站式跟踪。" },
       { "title": "双路径 Agent 集成", "desc": "PTY 终端或结构化代理，按场景挑路径。" },
-      { "title": "Harness 多阶段流水线", "desc": "spec → plan → impl → test，分阶段自动化执行并设质量门禁。" },
+      { "title": "Harness 多阶段编排", "desc": "按看板配置的处理阶段（实现 / AI 审查 / 人工审查 / 完成），AI 自动选择执行流程并设门禁。" },
       { "title": "MCP 集成", "desc": "Claude Code 直接读取项目状态，所有牛牛上下文可访问。" }
     ]
   },
   "screenshot": {
     "alt": "牛牛控制台截图",
     "caption": "一个工作站，统一调度多个 AI Agent 会话。"
+  },
+  "demo": {
+    "section_eyebrow": "实时演示",
+    "section_title": "多个 agent，同屏并行开跑",
+    "section_subtitle": "把单开 Claude Code 的「你亲自驱动的一个会话」，变成多 workspace 同时驱动多个 agent，各自按看板配置自选阶段、自主闭环。",
+    "alt": "牛牛演示动画：3 个 workspace 各跑一个 agent，按看板配置自选阶段并行自主闭环",
+    "caption": "3 个 workspace 各驱动一个 issue，agent 并行推进、隔离互不干扰，各自到点收尾。",
+    "note": "示意动画（非桌面 app 实拍），用于展示并行调度方式。"
+  },
+  "comparison": {
+    "section_eyebrow": "为什么选牛牛",
+    "section_title": "牛牛 vs 单开 Claude Code / Cursor",
+    "section_subtitle": "Claude Code / Cursor 即便能并行起子 agent，核心仍是你亲自驱动的一个会话；牛牛是从看板并行调度多个独立 workspace、各自一支 agent 团队的工作站。",
+    "col_niuniu": "🐮 牛牛",
+    "col_others": "单开 Claude Code / Cursor",
+    "footnote": "对比基于公开产品形态，仅供参考。",
+    "rows": [
+      { "label": "工作单元", "niuniu": "一个目标 / issue", "others": "一次对话" },
+      { "label": "并发", "niuniu": "多 workspace 并行跑多个 agent", "others": "单会话驱动，可起并行子 agent" },
+      { "label": "隔离", "niuniu": "每个 workspace 独立 git worktree + 独立会话，互不踩踏", "others": "共用同一工作区，易相互干扰" },
+      { "label": "自主度", "niuniu": "自主规划 → 执行 → 验证闭环，阻塞才找你", "others": "每一步都要你盯着推进" },
+      { "label": "跨项目 / 跨仓库", "niuniu": "原生支持，统一看板调度", "others": "手动切换上下文" },
+      { "label": "进度跟踪", "niuniu": "内置 Kanban：issue / checklist / 评论 / 时间线", "others": "散落在聊天记录里" },
+      { "label": "执行流程", "niuniu": "按看板配置的处理阶段，AI 自动选择执行流程（实现 / AI 审查 / 人工审查 / 完成）", "others": "固定手动步骤" },
+      { "label": "状态访问", "niuniu": "Claude Code 经 MCP 直接读取牛牛上下文", "others": "无" }
+    ]
+  },
+  "social_proof": {
+    "section_eyebrow": "社区与口碑",
+    "section_title": "开发者正在用牛牛并行开发",
+    "section_subtitle": "开源、本地优先、活跃迭代中 —— 在 GitHub 上跟踪真实进展。",
+    "stats": [
+      { "value": "MIT", "label": "开源协议，代码公开" },
+      { "value": "3", "label": "支持平台 · macOS / Windows / Linux" },
+      { "value": "100%", "label": "本地优先 · 数据默认不出本机" },
+      { "value": "∞", "label": "Workspace 数量不限" }
+    ],
+    "testimonials": [
+      { "quote": "以前单开 Claude Code 一次只能盯一个任务，现在三个 workspace 同时跑，下班前能交的活儿差不多翻倍。", "author": "独立开发者", "role": "全栈 · SaaS 副业" },
+      { "quote": "每个 workspace 一个 git worktree，agent 之间不会互相踩，并行重构再也不怕改崩别人的分支。", "author": "后端工程师", "role": "中型研发团队" },
+      { "quote": "团队私有版部署在自己机器上，代码不出内网，合规团队终于点头了。", "author": "技术负责人", "role": "金融科技创业公司" }
+    ]
   },
   "bottom_cta": {
     "headline": "准备好开始了吗？",
