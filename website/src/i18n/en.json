@@ -101,9 +101,9 @@
   "social_proof": {
     "section_eyebrow": "Community & traction",
     "section_title": "Developers are shipping in parallel with Niuniu",
-    "section_subtitle": "Open source, local-first, actively iterating — follow the real progress on GitHub.",
+    "section_subtitle": "Free to use, local-first, actively iterating — follow releases and feedback on GitHub.",
     "stats": [
-      { "value": "MIT", "label": "Open-source license, public code" },
+      { "value": "Free", "label": "Desktop edition, free to use" },
       { "value": "3", "label": "Platforms · macOS / Windows / Linux" },
       { "value": "100%", "label": "Local-first · data stays on your machine by default" },
       { "value": "∞", "label": "Unlimited workspaces" }
