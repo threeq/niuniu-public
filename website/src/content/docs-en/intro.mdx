@@ -1,17 +1,26 @@
 ---
 title: "Introduction"
-description: "What Niuniu is, what it solves, the two deployments at a glance."
+description: "What Niuniu is, what it solves, the capability landscape, and the two deployments at a glance."
 group: intro
 order: 1
 ---
 
-Niuniu is a **goal-driven, local-first AI development workstation**: write the work down as issues, and a fleet of AI Agents plan, execute, and verify them in parallel — across projects, repositories, and agents — all from a single machine.
+Niuniu is a **goal-driven, local-first AI work platform**: write the work down as issues, and a fleet of AI Agents plan, execute, and verify them in parallel — across projects and repositories. It started as a way to drive many parallel coding agents and has grown to cover **software development, office work, data analysis, and content creation**.
 
 ## What problem it solves
 
-Traditional AI coding assistants work in a one-to-one chat model: one session, one task at a time, and you have to babysit each step. When you're juggling three projects and five open issues, the constant back-and-forth becomes the bottleneck.
+Traditional AI assistants work in a one-to-one chat model: one session, one task at a time, and you have to babysit each step. When you're juggling three projects and five open issues, the constant back-and-forth becomes the bottleneck.
 
-Niuniu raises the unit of work from "a chat" to "a goal." Each workspace maps to one issue and comes with its own isolated git worktree, its own Claude session, and its own shell environment. The agent autonomously closes the loop on that goal — only coming back to you when it's actually blocked. Multiple workspaces run in parallel without interfering with each other.
+Niuniu raises the unit of work from "a chat" to "a goal." Each workspace maps to one issue and comes with its own isolated git worktree, its own agent session, and its own shell environment. The agent autonomously closes the loop on that goal — only coming back to you when it's actually blocked. Multiple workspaces run in parallel without interfering with each other.
+
+## Capability landscape
+
+- **Parallel engineering orchestration** — isolated parallel workspaces, kanban project management, Harness engineering gates, code review, and an [autohost](/docs/guides/agent#autohost-automation) watchdog that keeps work moving unattended.
+- **Any agent, any model** — drive Claude Code / Codex / Qwen Code, and point them at GLM / DeepSeek / MiniMax / Kimi or any compatible endpoint, switchable per workspace — no vendor lock-in.
+- **Scenes** — 18 one-click work modes spanning software / office / data / content, declaratively projecting MCP servers + plugins + quick actions.
+- **Data intelligence** — connect SQL / Redis / Mongo / ES / HTTP data sources, run governed read queries, and pin inline charts as continuously refreshing dashboards.
+- **Knowledge & memory** — ingest local directories into a searchable knowledge base; a white-box project memory captures patterns, decisions, and gotchas.
+- **IM bots** — [Lark / DingTalk / Telegram](/docs/guides/im-bot) two-way conversational collaboration, one bot routed across multiple projects.
 
 ## Two deployment options
 
@@ -23,4 +32,5 @@ For installation details, see the [Install guide](/docs/install/personal).
 ## Next steps
 
 - Try the [5-minute quickstart](/docs/quickstart) — get your first workspace running end to end.
-- Read [Core concepts](/docs/concepts) — understand how Project / Repository / Workspace / Agent relate to each other.
+- Read [Core concepts](/docs/concepts) — understand how Project / Repository / Workspace / Agent / Scene / Harness relate.
+- Connect an [IM bot](/docs/guides/im-bot) — drive work from Lark / DingTalk / Telegram group chats.

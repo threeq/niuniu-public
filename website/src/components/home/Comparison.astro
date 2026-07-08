@@ -4,7 +4,7 @@ import zh from '@/i18n/zh.json';
 import en from '@/i18n/en.json';
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const dict = locale === 'zh' ? zh : en;
-const rows = dict.comparison.rows as { label: string; niuniu: string; others: string }[];
+const rows = dict.comparison.rows as { label: string; niuniu: string; claude: string; codex: string }[];
 ---
 <section class="container-page py-20">
   <div class="text-center max-w-2xl mx-auto">
@@ -16,7 +16,7 @@ const rows = dict.comparison.rows as { label: string; niuniu: string; others: st
   </div>
 
   <div class="mt-12 overflow-x-auto rounded-2xl border border-[rgb(var(--color-border))]">
-    <table class="w-full text-sm min-w-[40rem]">
+    <table class="w-full text-sm min-w-[52rem]">
       <thead>
         <tr class="bg-[rgb(var(--color-card))]">
           <th class="text-left p-4 font-semibold w-1/4"></th>
@@ -24,7 +24,10 @@ const rows = dict.comparison.rows as { label: string; niuniu: string; others: st
             {t(locale, 'comparison.col_niuniu')}
           </th>
           <th class="p-4 font-semibold text-[rgb(var(--color-muted))]">
-            {t(locale, 'comparison.col_others')}
+            {t(locale, 'comparison.col_claude')}
+          </th>
+          <th class="p-4 font-semibold text-[rgb(var(--color-muted))]">
+            {t(locale, 'comparison.col_codex')}
           </th>
         </tr>
       </thead>
@@ -38,7 +41,8 @@ const rows = dict.comparison.rows as { label: string; niuniu: string; others: st
                 <span>{r.niuniu}</span>
               </span>
             </td>
-            <td class="p-4 text-[rgb(var(--color-muted))]">{r.others}</td>
+            <td class="p-4 text-[rgb(var(--color-muted))]">{r.claude}</td>
+            <td class="p-4 text-[rgb(var(--color-muted))]">{r.codex}</td>
           </tr>
         ))}
       </tbody>

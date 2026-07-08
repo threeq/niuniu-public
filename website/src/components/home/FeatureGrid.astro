@@ -5,7 +5,7 @@ import en from '@/i18n/en.json';
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const dict = locale === 'zh' ? zh : en;
 const items = dict.features.items as { title: string; desc: string }[];
-const icons = ['🪟', '🗂', '🤖', '⚙', '👥', '🔌'];
+const icons = ['🎯', '🗂', '🔀', '📋', '🎬', '📊', '🧠', '💬'];
 ---
 <section class="container-page py-20">
   <div class="text-center max-w-2xl mx-auto">

@@ -1,17 +1,26 @@
 ---
 title: 介绍
-description: 牛牛是什么、解决什么问题、两种部署方式速览。
+description: 牛牛是什么、解决什么问题、能力全景与两种部署方式速览。
 group: intro
 order: 1
 ---
 
-牛牛是一个**目标驱动的本地优先 AI 开发工作站**：把你想做的事写成 issue，多个 AI Agent 自主规划 → 执行 → 验证 → 收尾，跨项目、跨仓库并行推进。
+牛牛是一个**目标驱动的本地优先 AI 工作平台**：把你想做的事写成 issue，多个 AI Agent 自主规划 → 执行 → 验证 → 收尾，跨项目、跨仓库并行推进。它最初用于并行驱动多个编码 agent，如今已扩展到**软件开发、泛办公、数据分析与内容创作**。
 
 ## 它解决什么
 
-传统 AI 编码助手是"一对一"工作模式——一个会话只能处理一个任务，过程中还要不停回头确认细节。当你同时维护 3 个项目、5 个 issue 时，这种"陪聊式"协作很快就会成为瓶颈。
+传统 AI 助手是"一对一"工作模式——一个会话只能处理一个任务，过程中还要不停回头确认细节。当你同时维护 3 个项目、5 个 issue 时，这种"陪聊式"协作很快就会成为瓶颈。
 
-牛牛把工作单位从"一次对话"升级为"一个目标"：每个 workspace 对应一个 issue，自带独立的 git worktree、独立的 Claude 会话、独立的命令行环境；agent 在这个隔离环境里自动闭环完成目标，只在真正阻塞时回到你这里确认。多个 workspace 并行运行，互不干扰。
+牛牛把工作单位从"一次对话"升级为"一个目标"：每个 workspace 对应一个 issue，自带独立的 git worktree、独立的 agent 会话、独立的命令行环境；agent 在这个隔离环境里自动闭环完成目标，只在真正阻塞时回到你这里确认。多个 workspace 并行运行，互不干扰。
+
+## 能力全景
+
+- **并行工程编排** — 多 workspace 隔离并行、Kanban 项目管理、Harness 工程规范门禁、代码评审、[自动托管](/docs/guides/agent#自动托管autohost)看门狗无人值守推进。
+- **多引擎 · 任意模型** — 驱动 Claude Code / Codex / Qwen Code，并可指向 GLM（智谱）/ DeepSeek / MiniMax / Kimi 等任意兼容端点，按 workspace 切换、不锁厂商。
+- **场景（Scene）** — 18 个一键工作模式，横跨软件 / 办公 / 数据 / 内容，声明式注入 MCP 服务器 + 插件 + 快捷指令。
+- **数据智能** — 连接 SQL / Redis / Mongo / ES / HTTP 数据源，受治理只读查询，图表内联并可固定为持续刷新的看板。
+- **知识与记忆** — 摄取本地目录建知识库供 agent 检索；白盒项目记忆沉淀模式、决策与踩坑。
+- **IM 机器人** — [飞书 / 钉钉 / Telegram](/docs/guides/im-bot) 双向对话式协作，一个 bot 多项目分流。
 
 ## 两种交付形态
 
@@ -23,4 +32,5 @@ order: 1
 ## 下一步
 
 - 试用 [5 分钟快速上手](/docs/quickstart) — 跑通你的第一个 workspace。
-- 了解 [核心概念](/docs/concepts) — Project / Repository / Workspace / Agent 的关系。
+- 了解 [核心概念](/docs/concepts) — Project / Repository / Workspace / Agent / Scene / Harness 的关系。
+- 接入 [IM 机器人](/docs/guides/im-bot) — 从飞书 / 钉钉 / Telegram 群聊驱动工作。
