@@ -1,8 +1,8 @@
 # 牛牛 Niuniu
 
-> 牛牛（Niuniu）是一款目标驱动、本地优先的 AI 开发工作站：把要做的事写成 issue，多个 Claude Code Agent 自主规划、并行执行、自动验证，跨项目、跨仓库协作，只在真正阻塞时回到你这里确认。提供免费桌面版（macOS / Windows / Linux）与可私有化部署的团队私有版。
+> 牛牛（Niuniu）是一款目标驱动、本地优先的 AI 工作平台：把要做的事写成 issue，多个 agent 在 Claude Code / Codex / 任意模型上自主规划、并行执行、自动验证——从写代码到做表、查数、出文档，跨项目、跨仓库协作，只在真正阻塞时回到你这里确认。支持飞书 / 钉钉 / Telegram IM 机器人、场景一键工作模式、数据智能与知识记忆。提供免费桌面版（macOS / Windows / Linux）与可私有化部署的团队私有版。
 >
-> Niuniu is a goal-driven, local-first AI development workstation: write work as issues, and many Claude Code agents plan, execute in parallel, and self-verify across projects and repos — interrupting you only when truly blocked. Free desktop app (macOS / Windows / Linux) plus a self-hostable team edition.
+> Niuniu is a goal-driven, local-first AI work platform: write work as issues, and many agents plan, execute in parallel, and self-verify on Claude Code / Codex / any model — from writing code to building spreadsheets, querying data, and drafting docs — across projects and repos, interrupting you only when truly blocked. Includes Lark / DingTalk / Telegram IM bots, one-click scene work modes, data intelligence, and knowledge/memory. Free desktop app (macOS / Windows / Linux) plus a self-hostable team edition.
 
 ## 文档 Docs (中文)
 
@@ -13,6 +13,7 @@
 - [Agent 集成](https://www.niu6ai.com/docs/guides/agent): PTY 终端与结构化代理两条路径。
 - [Git Worktree 隔离](https://www.niu6ai.com/docs/guides/worktree): 每个 workspace 独立 worktree、并行互不干扰。
 - [外部集成 External integration](https://www.niu6ai.com/docs/guides/external-integration): 接入外部 API 与数据源。
+- [IM 机器人 IM bots](https://www.niu6ai.com/docs/guides/im-bot): 飞书 / 钉钉 / Telegram 双向对话式协作、一机多项目分流。
 - [故障排查 FAQ](https://www.niu6ai.com/docs/faq): 常见问题与排查。
 
 ## 安装 Install

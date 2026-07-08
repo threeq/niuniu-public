@@ -1,0 +1,76 @@
+---
+title: IM bots (Lark / DingTalk / Telegram)
+description: Connect Niuniu to Lark / DingTalk / Telegram — one bot routed across multiple projects, drive agents conversationally from group chat, images in, markdown out.
+group: guides
+order: 5
+---
+
+Niuniu's IM bots let you **drive agents straight from a Lark / DingTalk / Telegram group — without opening the desktop app**: describe the work in a group, Niuniu spins up a workspace in the matching project, and the agent's progress and results come back conversationally in the chat.
+
+The core idea in one line: **one bot (one credential, one connection) routes different groups to different projects under your account.**
+
+## Supported platforms
+
+| Platform | Connection | Inbound | Outbound |
+|---|---|---|---|
+| **Lark / 飞书** | Long-lived connection (no public callback needed) | Text, images, attachments | Markdown, receipts, task-status emoji |
+| **DingTalk** | Long-lived connection | Text, images, attachments | Markdown, receipts, task-status emoji |
+| **Telegram** | Bot API | Text, images, attachments | Markdown, receipts, new-reply |
+
+## Step 1 — Create a bot
+
+Go to **Settings → IM bots → + New bot**.
+
+1. Pick a platform (Lark / DingTalk / Telegram) and enter the bot credentials issued by that platform's developer console (App ID / Secret or Bot Token, per the field hints).
+2. After saving, the bot comes online over a **long-lived connection** and shows **Enabled**; hit **Test** anytime to verify connectivity.
+
+One bot can serve many groups and many projects — **you don't need a separate bot per project.**
+
+## Step 2 — Bind groups to projects
+
+Once the bot is in a group, tell Niuniu which project that group's messages should land in.
+
+- In the bot's **pending chats** list, select a group, choose a **target project**, and confirm the binding.
+- On success, the page shows that group's `channel_id` — handy for reference and troubleshooting.
+- **Multi-project routing**: bind different groups to different projects, and a single bot covers all your projects; group sessions are shown per their routed target project, so nothing gets crossed.
+
+> Bindings are managed centrally under **Configured bindings**: review every chat ↔ project mapping and **unbind** at any time.
+
+## Step 3 — Collaborate conversationally in the group
+
+Once bound, the group becomes an entry point:
+
+- **Ask for work**: @-mention the bot (or message per platform rules), and Niuniu spins up a workspace in the matching project for the agent to execute.
+- **Two-way conversation**: the agent's real replies come back to the group; you can follow up and course-correct in a back-and-forth, not a fire-and-forget.
+- **Images in**: drop screenshots or log files right into the chat and the agent reads them too.
+- **Markdown out**: the agent's replies render as markdown — code blocks and lists stay readable.
+- **Session switching**: a group may have several sessions in flight; switch by **session ID** to attach a reply to the right context.
+- **Receipts & task status**: messages get delivery receipts, and in-progress work is shown with each platform's native emoji reactions.
+
+## Typical scenarios
+
+- **Quick tickets**: in a dev group, @-mention the bot with "look into the login-page error log"; Niuniu spins up a workspace in the matching project and the agent posts its findings back.
+- **On-call response**: bind an alerts group to your ops project, and when an alert fires, have the agent pull logs and give a first triage right in the chat.
+- **One bot, many projects**: a single bot serves the "frontend", "backend", and "ops" groups at once, each routed to its own project without interference.
+- **Drive from mobile**: on your phone, hand work to the agent and check progress via Lark / DingTalk, then dig in later at your desk.
+
+## Credentials & binding management
+
+- **View bindings**: **Settings → IM bots → Configured bindings** lists each chat ↔ project pair.
+- **Unbind**: delete a binding from that list, and the group's messages stop landing in the old project.
+- **channel_id**: shown after creating / pairing, it's the group's unique identifier for troubleshooting routing.
+
+## Troubleshooting
+
+| Symptom | Cause / fix |
+|---|---|
+| Bot offline | Wrong credentials or not enabled on the platform side — re-enter credentials and hit **Test** |
+| No response to @-mention | The group isn't bound to a project — check **Configured bindings** or re-pair |
+| Messages land in the wrong project | Group bound to the wrong project — unbind and rebind to the right one |
+| Images / attachments not read | Make sure the platform bot has permission to read message attachments |
+
+## Next steps
+
+- [Kanban & Issues](/docs/guides/kanban) — how a request raised in chat flows once it becomes an issue
+- [Workspace & Agent chat](/docs/guides/agent) — how the agent works inside a workspace
+- [External integrations](/docs/guides/external-integration) — have the agent query GitHub / Jira / TAPD

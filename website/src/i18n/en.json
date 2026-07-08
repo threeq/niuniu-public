@@ -3,8 +3,8 @@
     "name": "Niuniu"
   },
   "site": {
-    "title": "Niuniu — Goal-driven parallel AI dev workstation",
-    "description": "Write down a goal — many AI Agents plan, execute, and verify it for you, in parallel, across projects and repositories. Local-first."
+    "title": "Niuniu — Local-first parallel AI work platform",
+    "description": "A local-first AI work platform: write down a goal and many agents finish it in parallel on Claude Code / Codex / any model — from software to office docs, data analysis, and content."
   },
   "nav": {
     "docs": "Docs",
@@ -17,8 +17,8 @@
     "download": "Download"
   },
   "hero": {
-    "headline": "Set the goal. Agents finish it.",
-    "subhead": "Niuniu is a local-first AI dev workstation: write the work as issues, and many AI Agents plan, execute, and verify in parallel across projects and repositories — only coming back to you when they're truly blocked.",
+    "headline": "Set the goal. An agent team finishes it.",
+    "subhead": "Niuniu is a local-first AI work platform: write the work as issues, and many agents plan, execute, and verify in parallel on Claude Code / Codex / any model — from writing code to building spreadsheets, querying data, and drafting docs. It only comes back when truly blocked.",
     "cta_primary": "Download Personal",
     "cta_secondary": "View Self-Hosted Team →",
     "dashboard_alt": "Screenshot of the Niuniu workstation: parallel task list, chat panel, commit feed, and terminal"
@@ -52,14 +52,16 @@
     }
   },
   "features": {
-    "section_title": "Core capabilities",
+    "section_title": "One platform across software · office · data · content",
     "items": [
-      { "title": "Goal-driven autonomy", "desc": "Write down the goal; the agent plans, executes, and verifies on its own — only pinging you when actually blocked." },
-      { "title": "Parallel workspaces", "desc": "One workspace = one git worktree + isolated agent session. Many run in parallel without stepping on each other." },
-      { "title": "Built-in kanban", "desc": "Issues, checklists, comments, timeline — all in one place." },
-      { "title": "Dual agent paths", "desc": "PTY terminal or structured proxy — pick what fits the task." },
-      { "title": "Harness orchestration", "desc": "AI auto-selects the flow from your kanban stages (implement / AI review / human review / done) — automated, gated, observable." },
-      { "title": "MCP-native", "desc": "Claude Code reads Niuniu state directly via MCP." }
+      { "title": "Goal-driven, autohosted loop", "desc": "Write the goal; the agent plans, executes, verifies, and wraps up on its own — an unattended autohost watchdog keeps it going and only pings you when blocked." },
+      { "title": "Parallel workspaces, worktree-isolated", "desc": "Each workspace gets its own git worktree + isolated agent session, running in parallel across projects and repos without collisions." },
+      { "title": "Any agent, any model — no lock-in", "desc": "Drive Claude Code / Codex / Qwen Code, and point them at GLM / DeepSeek / MiniMax / Kimi or any compatible endpoint via scene env presets." },
+      { "title": "Kanban + Harness engineering gates", "desc": "Track issues / checklists / comments / timeline; Harness wires lint / tests / AI review into a pre-commit gate." },
+      { "title": "Scenes: one-click work modes", "desc": "18 built-in scenes spanning software / office / data / content, declaratively projecting MCP + plugins + quick actions — auto-recommended, layerable, forkable." },
+      { "title": "Data intelligence: query + live dashboards", "desc": "Connect SQL / Redis / Mongo / ES / HTTP, run governed read queries, and pin inline charts as continuously refreshing dashboards." },
+      { "title": "Knowledge base + project memory", "desc": "Ingest local directories into a searchable knowledge base; a white-box project memory captures patterns, decisions, and gotchas — searchable, mergeable, restorable." },
+      { "title": "IM bots: Lark / DingTalk / Telegram", "desc": "Drive work conversationally from group chat — inbound text & images, markdown out, one bot routed across multiple projects." }
     ]
   },
   "screenshot": {
@@ -76,20 +78,24 @@
   },
   "comparison": {
     "section_eyebrow": "Why Niuniu",
-    "section_title": "Niuniu vs single-session Claude Code / Cursor",
-    "section_subtitle": "Claude Code / Cursor — even with parallel subagents — is still one session you drive; Niuniu is the workstation that schedules many independent workspaces, each with its own team of agents, from a board.",
-    "col_niuniu": "🐮 Niuniu",
-    "col_others": "Single-session Claude Code / Cursor",
-    "footnote": "Comparison reflects publicly available product behavior and is for reference only.",
+    "section_title": "Niuniu vs Claude Desktop vs OpenAI Codex",
+    "section_subtitle": "All three run agents in parallel and support MCP. The difference: Niuniu isn't locked to one vendor, spans software through office / data / content, and can run entirely on your own machine or network.",
+    "col_niuniu": "🐮 Niuniu Desktop",
+    "col_claude": "Claude Desktop",
+    "col_codex": "OpenAI Codex Desktop",
+    "footnote": "Compiled from publicly available 2026 product information; competitor capabilities evolve — for reference only.",
     "rows": [
-      { "label": "Unit of work", "niuniu": "A goal / issue", "others": "A single conversation" },
-      { "label": "Concurrency", "niuniu": "Many workspaces running many agents in parallel", "others": "One session you drive, can spawn parallel subagents" },
-      { "label": "Isolation", "niuniu": "Each workspace gets its own git worktree + session — no stepping on each other", "others": "Shared workspace, easy to collide" },
-      { "label": "Autonomy", "niuniu": "Plans → executes → verifies on its own; pings you only when blocked", "others": "You drive every step" },
-      { "label": "Cross-project / repo", "niuniu": "Native, scheduled from one kanban board", "others": "Manual context switching" },
-      { "label": "Progress tracking", "niuniu": "Built-in kanban: issues / checklists / comments / timeline", "others": "Scattered across chat history" },
-      { "label": "Execution flow", "niuniu": "AI auto-selects the flow from your kanban stages (implement / AI review / human review / done)", "others": "Fixed manual steps" },
-      { "label": "State access", "niuniu": "Claude Code reads Niuniu context directly over MCP", "others": "None" }
+      { "label": "Model / engine", "niuniu": "Drives Claude Code / Codex / Qwen + any compatible endpoint (GLM / DeepSeek / Kimi), switchable per workspace — no vendor lock-in", "claude": "Claude models only", "codex": "OpenAI models only" },
+      { "label": "Work types", "niuniu": "Software + office + data + content, 18 built-in scenes one click away", "claude": "General assistant + coding (Chat / Cowork / Code)", "codex": "Focused on agentic coding" },
+      { "label": "How work is organized", "niuniu": "Kanban, issue-driven: columns / checklists / comments / timeline / execution plans", "claude": "Chats / projects", "codex": "Tasks / sessions" },
+      { "label": "Parallel execution", "niuniu": "Many workspaces, each its own worktree, scheduled across projects from one board", "claude": "Cowork can run parallel subagents (within a local folder)", "codex": "Built-in worktrees, multiple agents in parallel / cloud" },
+      { "label": "Workflow & gates", "niuniu": "Harness engineering gates (pre-commit / AI-review) + kanban stages + unattended autohost watchdog", "claude": "Cowork multi-step runs", "codex": "Automations" },
+      { "label": "Data intelligence", "niuniu": "Connect SQL / Redis / Mongo / ES / HTTP, governed queries + pinned live dashboards", "claude": "Bring your own via MCP", "codex": "No built-in data platform" },
+      { "label": "IM collaboration", "niuniu": "Lark / DingTalk / Telegram two-way conversational, routed across projects", "claude": "None", "codex": "None" },
+      { "label": "Knowledge & memory", "niuniu": "Knowledge-base ingestion + white-box searchable project memory", "claude": "Memory / projects", "codex": "Limited" },
+      { "label": "Deployment & data sovereignty", "niuniu": "Local-first (SQLite); self-hosted team edition on docker + PG, multi-tenant / audit, data can stay on-prem", "claude": "Cloud account (Cowork accesses a local folder)", "codex": "Cloud account + local" },
+      { "label": "Platforms", "niuniu": "macOS / Windows / Linux", "claude": "macOS / Windows", "codex": "macOS / Windows" },
+      { "label": "MCP support", "niuniu": "Yes — and exposes its own context to agents as tools", "claude": "Yes — most mature ecosystem", "codex": "Yes (plugins)" }
     ]
   },
   "social_proof": {

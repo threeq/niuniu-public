@@ -3,8 +3,8 @@
     "name": "牛牛"
   },
   "site": {
-    "title": "牛牛 — 目标驱动的并行 AI 开发工作站",
-    "description": "本地优先的 AI 开发工作站：写下目标，多个 AI Agent 自动并行完成，跨项目、跨仓库、跨 agent。"
+    "title": "牛牛 — 本地优先的并行 AI 工作平台",
+    "description": "本地优先的 AI 工作平台：写下目标，多个 agent 在 Claude Code / Codex / 任意模型上并行完成——从软件开发到办公文档、数据分析与内容创作。"
   },
   "nav": {
     "docs": "文档",
@@ -17,8 +17,8 @@
     "download": "下载"
   },
   "hero": {
-    "headline": "给定目标，让 AI 自动完成",
-    "subhead": "牛牛是本地优先的 AI 开发工作站：把要做的事拆成 issue，多个 AI Agent 并行驱动、自主闭环，跨项目、跨仓库协作。",
+    "headline": "给定目标，AI 团队并行做完",
+    "subhead": "牛牛是本地优先的 AI 工作平台：把要做的事写成 issue，多个 agent 在 Claude Code / Codex / 任意模型上并行规划、执行、验证——从写代码到做表、查数、出文档，只在真正阻塞时回到你这里。",
     "cta_primary": "下载桌面版",
     "cta_secondary": "了解团队私有版 →",
     "dashboard_alt": "牛牛工作站界面截图：任务列表、并行对话面板、仓库提交记录与终端"
@@ -52,14 +52,16 @@
     }
   },
   "features": {
-    "section_title": "核心能力",
+    "section_title": "一个平台，横跨软件 · 办公 · 数据 · 内容",
     "items": [
-      { "title": "目标驱动自动完成", "desc": "写下目标，agent 自主规划 → 执行 → 验证 → 完成；过程中遇到阻塞才回到你这里确认。" },
-      { "title": "多 Workspace 并行", "desc": "每个 workspace 一个 git worktree + 独立 agent 会话，互不干扰，多任务同时推进。" },
-      { "title": "Kanban 项目管理", "desc": "Issues / Checklists / Comments / Timeline 一站式跟踪。" },
-      { "title": "双路径 Agent 集成", "desc": "PTY 终端或结构化代理，按场景挑路径。" },
-      { "title": "Harness 多阶段编排", "desc": "按看板配置的处理阶段（实现 / AI 审查 / 人工审查 / 完成），AI 自动选择执行流程并设门禁。" },
-      { "title": "MCP 集成", "desc": "Claude Code 直接读取项目状态，所有牛牛上下文可访问。" }
+      { "title": "目标驱动 · 自动托管闭环", "desc": "写下目标，agent 自主规划 → 执行 → 验证 → 收尾；自动托管看门狗无人值守持续推进，阻塞才回到你这里。" },
+      { "title": "多 Workspace 并行 · worktree 隔离", "desc": "每个 workspace 一个独立 git worktree + 独立 agent 会话，跨项目、跨仓库并行，互不踩踏。" },
+      { "title": "多引擎 · 任意模型不锁厂商", "desc": "驱动 Claude Code / Codex / Qwen Code，并可经场景环境预设指向 GLM / DeepSeek / MiniMax / Kimi 等任意兼容端点。" },
+      { "title": "Kanban + Harness 工程规范", "desc": "issue / 清单 / 评论 / 时间线一站跟踪；Harness 把 lint / 测试 / AI 评审串成提交前门禁。" },
+      { "title": "场景：一键工作模式", "desc": "18 个内置场景横跨软件 / 办公 / 数据 / 内容，声明式注入 MCP + 插件 + 快捷指令，自动推荐、可分层可 fork。" },
+      { "title": "数据智能：接库查询 + 实时看板", "desc": "连接 SQL / Redis / Mongo / ES / HTTP，受治理只读查询，图表内联并可固定为持续刷新的看板。" },
+      { "title": "知识库 + 项目记忆", "desc": "摄取本地目录建知识库供 agent 检索；白盒项目记忆沉淀模式、决策与踩坑，可搜索、合并、恢复。" },
+      { "title": "IM 机器人：飞书 / 钉钉 / Telegram", "desc": "从群聊双向对话式驱动工作，图文入站、markdown 出站，一个 bot 多项目分流。" }
     ]
   },
   "screenshot": {
@@ -76,20 +78,24 @@
   },
   "comparison": {
     "section_eyebrow": "为什么选牛牛",
-    "section_title": "牛牛 vs 单开 Claude Code / Cursor",
-    "section_subtitle": "Claude Code / Cursor 即便能并行起子 agent，核心仍是你亲自驱动的一个会话；牛牛是从看板并行调度多个独立 workspace、各自一支 agent 团队的工作站。",
-    "col_niuniu": "🐮 牛牛",
-    "col_others": "单开 Claude Code / Cursor",
-    "footnote": "对比基于公开产品形态，仅供参考。",
+    "section_title": "牛牛 vs Claude Desktop vs OpenAI Codex",
+    "section_subtitle": "三者都能并行跑多个 agent、都支持 MCP。差别在于：牛牛不锁定单一厂商，覆盖从软件开发到办公、数据、内容，并可完全跑在你自己的机器或内网上。",
+    "col_niuniu": "🐮 牛牛桌面版",
+    "col_claude": "Claude Desktop",
+    "col_codex": "OpenAI Codex 桌面版",
+    "footnote": "对比基于各产品 2026 年公开资料整理，竞品能力持续更新，仅供参考。",
     "rows": [
-      { "label": "工作单元", "niuniu": "一个目标 / issue", "others": "一次对话" },
-      { "label": "并发", "niuniu": "多 workspace 并行跑多个 agent", "others": "单会话驱动，可起并行子 agent" },
-      { "label": "隔离", "niuniu": "每个 workspace 独立 git worktree + 独立会话，互不踩踏", "others": "共用同一工作区，易相互干扰" },
-      { "label": "自主度", "niuniu": "自主规划 → 执行 → 验证闭环，阻塞才找你", "others": "每一步都要你盯着推进" },
-      { "label": "跨项目 / 跨仓库", "niuniu": "原生支持，统一看板调度", "others": "手动切换上下文" },
-      { "label": "进度跟踪", "niuniu": "内置 Kanban：issue / checklist / 评论 / 时间线", "others": "散落在聊天记录里" },
-      { "label": "执行流程", "niuniu": "按看板配置的处理阶段，AI 自动选择执行流程（实现 / AI 审查 / 人工审查 / 完成）", "others": "固定手动步骤" },
-      { "label": "状态访问", "niuniu": "Claude Code 经 MCP 直接读取牛牛上下文", "others": "无" }
+      { "label": "模型 / 引擎", "niuniu": "驱动 Claude Code / Codex / Qwen + 任意兼容端点（GLM / DeepSeek / Kimi），按 workspace 切换、不锁厂商", "claude": "仅 Claude 系列模型", "codex": "仅 OpenAI 系列模型" },
+      { "label": "工作类型", "niuniu": "软件 + 泛办公 + 数据 + 内容，18 内置场景一键切换", "claude": "通用助手 + 编码（Chat / Cowork / Code）", "codex": "聚焦 agentic 编码" },
+      { "label": "工作组织", "niuniu": "Kanban issue 驱动：列 / 清单 / 评论 / 时间线 / 执行计划", "claude": "会话 / 项目", "codex": "任务 / 会话" },
+      { "label": "并行执行", "niuniu": "多 workspace 各自独立 worktree，跨项目由统一看板调度", "claude": "Cowork 可并行子 agent（单机文件夹内）", "codex": "内置 worktree，多 agent 跨项目并行 / 云端" },
+      { "label": "工作流与门禁", "niuniu": "Harness 工程规范（pre-commit / AI 评审门禁）+ 看板阶段 + 自动托管看门狗", "claude": "Cowork 多步执行", "codex": "Automations 自动化" },
+      { "label": "数据智能", "niuniu": "接 SQL / Redis / Mongo / ES / HTTP，受治理查询 + 固定实时看板", "claude": "需经 MCP 自行接入", "codex": "无内置数据平台" },
+      { "label": "IM 协作", "niuniu": "飞书 / 钉钉 / Telegram 双向对话式，多项目分流", "claude": "无", "codex": "无" },
+      { "label": "知识与记忆", "niuniu": "知识库摄取 + 白盒可搜索项目记忆", "claude": "记忆 / 项目", "codex": "有限" },
+      { "label": "部署与数据主权", "niuniu": "本地优先（SQLite）；团队私有版 docker + PG，多租户 / 审计，数据可不出内网", "claude": "云账号（Cowork 访问本地文件夹）", "codex": "云账号 + 本地" },
+      { "label": "平台", "niuniu": "macOS / Windows / Linux", "claude": "macOS / Windows", "codex": "macOS / Windows" },
+      { "label": "MCP 支持", "niuniu": "支持，并把自身上下文作为工具暴露给 agent", "claude": "支持，生态最成熟", "codex": "支持（插件）" }
     ]
   },
   "social_proof": {
