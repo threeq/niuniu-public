@@ -61,7 +61,8 @@
       { "title": "Scenes: one-click work modes", "desc": "18 built-in scenes spanning software / office / data / content, declaratively projecting MCP + plugins + quick actions — auto-recommended, layerable, forkable." },
       { "title": "Data intelligence: query + live dashboards", "desc": "Connect SQL / Redis / Mongo / ES / HTTP, run governed read queries, and pin inline charts as continuously refreshing dashboards." },
       { "title": "Knowledge base + project memory", "desc": "Ingest local directories into a searchable knowledge base; a white-box project memory captures patterns, decisions, and gotchas — searchable, mergeable, restorable." },
-      { "title": "IM bots: Lark / DingTalk / Telegram", "desc": "Drive work conversationally from group chat — inbound text & images, markdown out, one bot routed across multiple projects." }
+      { "title": "IM bots: Lark / DingTalk / Telegram", "desc": "Drive work conversationally from group chat — inbound text & images, markdown out, one bot routed across multiple projects." },
+      { "title": "Unattended runs & schedule management", "desc": "Give a workspace a cron schedule to auto-trigger the agent; the autohost watchdog keeps it moving unattended, with run history you can review." }
     ]
   },
   "screenshot": {
