@@ -101,9 +101,9 @@
   "social_proof": {
     "section_eyebrow": "社区与口碑",
     "section_title": "开发者正在用牛牛并行开发",
-    "section_subtitle": "开源、本地优先、活跃迭代中 —— 在 GitHub 上跟踪真实进展。",
+    "section_subtitle": "免费使用、本地优先、活跃迭代中 —— 在 GitHub 上跟踪发布与反馈。",
     "stats": [
-      { "value": "MIT", "label": "开源协议，代码公开" },
+      { "value": "免费", "label": "桌面版免费使用" },
       { "value": "3", "label": "支持平台 · macOS / Windows / Linux" },
       { "value": "100%", "label": "本地优先 · 数据默认不出本机" },
       { "value": "∞", "label": "Workspace 数量不限" }
