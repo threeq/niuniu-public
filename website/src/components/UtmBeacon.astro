@@ -1,0 +1,92 @@
+---
+/**
+ * First-party UTM visit beacon.
+ *
+ * Reports one anonymous pageview per full page load to the relay's
+ * `POST /api/utm/visit`, carrying the landing path, referrer, an anonymous
+ * client-generated visitor_id (localStorage, for unique-visitor de-dup), and
+ * the five standard UTM fields (current URL, falling back to the first-touch
+ * set persisted on the first campaign landing).
+ *
+ * Gated by the SAME privacy check as third-party analytics (`shouldLoadAnalytics`):
+ * production host only, honoring DNT and GPC. Any error is swallowed — the
+ * beacon must never affect the page. No PII is sent; the relay stores no IP.
+ *
+ * Config (.env / deploy env):
+ *   PUBLIC_RELAY_UTM_ENDPOINT — full URL of the relay ingest endpoint.
+ *     Defaults to the production relay when unset.
+ */
+const endpoint =
+  import.meta.env.PUBLIC_RELAY_UTM_ENDPOINT ?? 'https://niuniu-relay.niu6ai.com/api/utm/visit';
+---
+<span id="utm-beacon-config" data-endpoint={endpoint} hidden></span>
+<script>
+  import { shouldLoadAnalytics } from '@/lib/analytics';
+  import { parseUtm, hasUtm, UTM_KEYS, type UtmParams } from '@/lib/utm';
+
+  const cfg = document.getElementById('utm-beacon-config');
+  const endpoint = cfg?.getAttribute('data-endpoint') ?? '';
+
+  const gpc = (navigator as Navigator & { globalPrivacyControl?: boolean }).globalPrivacyControl;
+
+  if (
+    endpoint &&
+    shouldLoadAnalytics({
+      hostname: location.hostname,
+      doNotTrack: navigator.doNotTrack,
+      globalPrivacyControl: gpc,
+    })
+  ) {
+    try {
+      // Anonymous, persistent visitor id (for unique-visitor de-dup at the relay).
+      let visitorId = localStorage.getItem('nn_visitor_id');
+      if (!visitorId) {
+        visitorId = crypto.randomUUID();
+        localStorage.setItem('nn_visitor_id', visitorId);
+      }
+
+      // Current-URL UTM, else fall back to the persisted first-touch set so
+      // downstream pageviews within a campaign session stay attributed.
+      let utm = parseUtm(location.search);
+      if (hasUtm(utm)) {
+        try {
+          localStorage.setItem('nn_utm_first', JSON.stringify(utm));
+        } catch {
+          /* storage full / disabled — attribution best-effort */
+        }
+      } else {
+        try {
+          const stored = localStorage.getItem('nn_utm_first');
+          if (stored) utm = { ...utm, ...(JSON.parse(stored) as Partial<UtmParams>) };
+        } catch {
+          /* ignore malformed stored value */
+        }
+      }
+
+      const payload: Record<string, string> = {
+        visitor_id: visitorId,
+        path: location.pathname,
+        referrer: document.referrer || '',
+      };
+      for (const key of UTM_KEYS) payload[key] = utm[key] ?? '';
+
+      // text/plain body avoids a CORS preflight (it is a safelisted content
+      // type), so sendBeacon fires reliably cross-origin; the relay decodes the
+      // JSON regardless of Content-Type.
+      const body = JSON.stringify(payload);
+      const blob = new Blob([body], { type: 'text/plain;charset=UTF-8' });
+      if (navigator.sendBeacon && navigator.sendBeacon(endpoint, blob)) {
+        // delivered
+      } else {
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=UTF-8' },
+          body,
+          keepalive: true,
+        }).catch(() => {});
+      }
+    } catch {
+      /* never let reporting affect the page */
+    }
+  }
+</script>
