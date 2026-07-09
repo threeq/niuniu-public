@@ -19,4 +19,15 @@ const docsEn = defineCollection({
   schema: docSchema,
 });
 
-export const collections = { 'docs-zh': docsZh, 'docs-en': docsEn };
+const blogZh = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog-zh' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    pubDate: z.coerce.date(),
+    keywords: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+  }),
+});
+
+export const collections = { 'docs-zh': docsZh, 'docs-en': docsEn, 'blog-zh': blogZh };

@@ -2,7 +2,7 @@
 
 # 🐮 牛牛 Niuniu
 
-### 给定一个目标，多个 Claude Code agent 并行把它做完
+### 给定一个目标，AI 团队并行把它做完
 
 > 中文 | [English](./README.en.md)
 
@@ -15,7 +15,7 @@
 
 </div>
 
-牛牛是一款**目标驱动**的本地优先 AI 开发工作站：把要做的事写成 issue，多个 Claude Code agent 自主规划、**并行执行**、自动验证，跨项目、跨仓库协作 —— 只在真正阻塞时回到你这里确认。
+牛牛是一款**目标驱动**的本地优先 AI 工作平台：把要做的事写成 issue，多个 agent 在 **Claude Code / Codex / 任意模型**上自主规划、**并行执行**、自动验证，跨项目、跨仓库协作 —— 只在真正阻塞时回到你这里确认。它最初用于并行驱动多个编码 agent，如今已扩展到**软件开发、泛办公、数据分析与内容创作**。
 
 ## 🎬 Demo
 
@@ -50,10 +50,25 @@
 
 > 一句话:Claude Code / Cursor 即便能并行起子 agent,核心仍是**你亲自驱动的一个会话**;牛牛是从看板**并行调度多个独立 workspace、各自一支 agent 团队**的工作站。
 
+## ✨ 能力全景
+
+一个平台，横跨软件 · 办公 · 数据 · 内容:
+
+- **目标驱动 · 自动托管闭环** — 写下目标,agent 自主规划 → 执行 → 验证 → 收尾;自动托管看门狗无人值守持续推进,阻塞才回到你这里。
+- **多 Workspace 并行 · worktree 隔离** — 每个 workspace 一个独立 git worktree + 独立 agent 会话,跨项目、跨仓库并行,互不踩踏。
+- **多引擎 · 任意模型不锁厂商** — 驱动 Claude Code / Codex / Qwen Code,并可经场景预设指向 GLM(智谱)/ DeepSeek / MiniMax / Kimi 等任意兼容端点,按 workspace 切换。
+- **Kanban + Harness 工程规范** — issue / 清单 / 评论 / 时间线一站跟踪;Harness 把 lint / 测试 / AI 评审串成提交前门禁。
+- **场景(Scene):一键工作模式** — 18 个内置场景横跨软件 / 办公 / 数据 / 内容,声明式注入 MCP + 插件 + 快捷指令,自动推荐、可分层可 fork。
+- **数据智能:接库查询 + 实时看板** — 连接 SQL / Redis / Mongo / ES / HTTP,受治理只读查询,图表内联并可固定为持续刷新的看板。
+- **知识库 + 项目记忆** — 摄取本地目录建知识库供 agent 检索;白盒项目记忆沉淀模式、决策与踩坑,可搜索、合并、恢复。
+- **IM 机器人:飞书 / 钉钉 / Telegram** — 从群聊双向对话式驱动工作,图文入站、markdown 出站,一个 bot 多项目分流。
+- **无人值守 · 定时执行管理** — 为 workspace 配 cron 定时任务,到点自动触发 agent,执行历史与运行记录可回看。
+
 ## 链接
 
 - 🌐 官网与文档:<https://www.niu6ai.com>
 - 📦 桌面 app 下载:[Releases](https://github.com/threeq/niuniu-public/releases/latest)
+- 📝 博客:<https://www.niu6ai.com/blog>
 - 📜 更新日志:<https://www.niu6ai.com/changelog>
 - 🐛 反馈 bug:[New Bug Report](https://github.com/threeq/niuniu-public/issues/new?template=bug_report_zh.yml)
 - 💡 功能建议:[New Feature Request](https://github.com/threeq/niuniu-public/issues/new?template=feature_request_zh.yml)

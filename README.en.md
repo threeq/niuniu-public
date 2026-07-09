@@ -2,7 +2,7 @@
 
 # 🐮 Niuniu
 
-### Set one goal — a fleet of Claude Code agents finishes it in parallel
+### Set one goal — an AI team finishes it in parallel
 
 > [中文](./README.md) | English
 
@@ -15,10 +15,12 @@
 
 </div>
 
-Niuniu is a **goal-driven**, local-first AI development workstation: write the
-work down as issues, and a fleet of Claude Code agents plan, **execute in
-parallel**, and self-verify — across projects and repositories. They only come
-back to you when they're actually blocked.
+Niuniu is a **goal-driven**, local-first AI work platform: write the work down
+as issues, and many agents plan, **execute in parallel**, and self-verify on
+**Claude Code / Codex / any model** — across projects and repositories. They
+only come back to you when they're actually blocked. It began as a way to drive
+many coding agents in parallel and now spans **software development, everyday
+office work, data analysis, and content creation**.
 
 ## 🎬 Demo
 
@@ -55,10 +57,25 @@ workspaces running agents side by side**:
 > In one line: Claude Code / Cursor — even with parallel subagents — is still **one session you drive**; Niuniu is the
 > workstation that schedules **many independent workspaces, each with its own team of agents**, from a board.
 
+## ✨ Capabilities
+
+One platform across software · office · data · content:
+
+- **Goal-driven, self-hosted loop** — write a goal; the agent plans → executes → verifies → wraps up. An auto-host watchdog keeps pushing unattended and only returns when blocked.
+- **Parallel workspaces, worktree isolation** — each workspace gets its own git worktree + agent session, running across projects and repos without collisions.
+- **Multi-engine, any model, no lock-in** — drive Claude Code / Codex / Qwen Code, or point a scene at GLM / DeepSeek / MiniMax / Kimi and any compatible endpoint, switchable per workspace.
+- **Kanban + Harness engineering gates** — track issues / checklists / comments / timeline in one place; Harness wires lint / tests / AI review into pre-commit gates.
+- **Scenes: one-click work modes** — 18 built-in scenes across software / office / data / content, declaratively injecting MCP servers + plugins + slash commands.
+- **Data intelligence** — connect SQL / Redis / Mongo / ES / HTTP, run governed read-only queries, inline charts, and pin them as live-refreshing dashboards.
+- **Knowledge base + project memory** — ingest local directories into a searchable knowledge base; white-box project memory captures patterns, decisions, and pitfalls.
+- **IM bots: Lark / DingTalk / Telegram** — drive work conversationally from group chats, images in, markdown out, one bot fanning out across projects.
+- **Unattended scheduled execution** — attach cron schedules to a workspace to trigger agents automatically, with replayable run history.
+
 ## Links
 
 - 🌐 Website & docs: <https://www.niu6ai.com/en>
 - 📦 Desktop app downloads: [Releases](https://github.com/threeq/niuniu-public/releases/latest)
+- 📝 Blog: <https://www.niu6ai.com/blog>
 - 📜 Changelog: <https://www.niu6ai.com/en/changelog>
 - 🐛 File a bug: [New Bug Report](https://github.com/threeq/niuniu-public/issues/new?template=bug_report_en.yml)
 - 💡 Feature request: [New Feature Request](https://github.com/threeq/niuniu-public/issues/new?template=feature_request_en.yml)
