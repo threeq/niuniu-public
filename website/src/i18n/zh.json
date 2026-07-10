@@ -20,7 +20,10 @@
   "blog": {
     "title": "博客",
     "description": "牛牛的实践、教程与效率心法：如何用多个 AI agent 并行把活干完。",
-    "back": "返回博客"
+    "back": "返回博客",
+    "read_more": "阅读全文",
+    "more": "更多文章",
+    "empty": "文章即将上线，敬请期待。"
   },
   "hero": {
     "headline": "给定目标，AI 团队并行做完",
