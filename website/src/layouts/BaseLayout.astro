@@ -4,6 +4,7 @@ import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
 import Header from '@/components/shell/Header.astro';
 import Footer from '@/components/shell/Footer.astro';
 import Analytics from '@/components/Analytics.astro';
+import UtmBeacon from '@/components/UtmBeacon.astro';
 import { organizationSchema, websiteSchema, type JsonLd } from '@/lib/structured-data';
 
 interface Props {
@@ -74,5 +75,6 @@ const jsonLdGraph: JsonLd[] = [
     </main>
     <Footer />
     <Analytics />
+    <UtmBeacon />
   </body>
 </html>
