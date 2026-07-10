@@ -20,7 +20,10 @@
   "blog": {
     "title": "Blog",
     "description": "Niuniu practices, tutorials, and productivity playbooks — how to finish work with many AI agents in parallel.",
-    "back": "Back to blog"
+    "back": "Back to blog",
+    "read_more": "Read more",
+    "more": "More posts",
+    "empty": "Posts are coming soon."
   },
   "hero": {
     "headline": "Set the goal. An agent team finishes it.",
