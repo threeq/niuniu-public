@@ -40,7 +40,7 @@ sudo systemctl enable --now docker
 ### A.2 下载部署模板
 
 ```bash
-git clone https://github.com/niuniu-dev/niuniu.git
+git clone https://github.com/threeq/niuniu.git
 cd niuniu/relay/deploy
 cp server.yaml.example server.yaml
 ```
@@ -161,24 +161,20 @@ SQL
 
 ### B.3 获取 niuniu-server 二进制
 
-**选项 1：直接下载预编译包**（推荐）
-
-到 [GitHub Releases](https://github.com/threeq/niuniu-public/releases) 下载对应平台的 `niuniu-server-<版本>-linux-<arch>`，重命名为 `niuniu-server` 并放到 `/usr/local/bin/`：
-
-```bash
-sudo install -m 0755 niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
-```
-
-**选项 2：自行构建**
+**选项 1：自行构建**（推荐）
 
 需要 Go 1.25+ 与 pnpm 9+：
 
 ```bash
-git clone https://github.com/niuniu-dev/niuniu.git
+git clone https://github.com/threeq/niuniu.git
 cd niuniu
 make build-linux
 sudo install -m 0755 bin/niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
 ```
+
+**选项 2：桌面安装包**
+
+[GitHub Releases](https://github.com/threeq/niuniu/releases) 提供 macOS / Windows / Linux 桌面安装包（内置 niuniu-server，适合单机使用）；服务器裸二进制不随 Release 发布，Linux 服务器请使用上面的源码构建方式。
 
 ### B.4 创建系统用户与目录
 
@@ -237,7 +233,7 @@ sudo chmod 0640 /etc/niuniu/config.yaml
 ```ini
 [Unit]
 Description=Niuniu Team Server
-Documentation=https://github.com/niuniu-dev/niuniu
+Documentation=https://github.com/threeq/niuniu
 After=network-online.target postgresql.service
 Wants=network-online.target
 

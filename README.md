@@ -6,10 +6,10 @@
 
 > 中文 | [English](./README.en.md)
 
-[![Stars](https://img.shields.io/github/stars/threeq/niuniu-public?style=flat&logo=github&color=f5a623)](https://github.com/threeq/niuniu-public/stargazers)
-[![Latest release](https://img.shields.io/github/v/release/threeq/niuniu-public?display_name=tag&logo=github)](https://github.com/threeq/niuniu-public/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/threeq/niuniu-public/total?logo=github&label=downloads)](https://github.com/threeq/niuniu-public/releases)
-[![License](https://img.shields.io/github/license/threeq/niuniu-public)](./LICENSE)
+[![Stars](https://img.shields.io/github/stars/threeq/niuniu?style=flat&logo=github&color=f5a623)](https://github.com/threeq/niuniu/stargazers)
+[![Latest release](https://img.shields.io/github/v/release/threeq/niuniu?display_name=tag&logo=github)](https://github.com/threeq/niuniu/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/threeq/niuniu/total?logo=github&label=downloads)](https://github.com/threeq/niuniu/releases)
+[![License](https://img.shields.io/github/license/threeq/niuniu)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-blue)](https://www.niu6ai.com)
 [![Website](https://img.shields.io/badge/官网-niu6ai.com-2e7d32?logo=astro&logoColor=white)](https://www.niu6ai.com)
 
@@ -67,11 +67,11 @@
 ## 链接
 
 - 🌐 官网与文档:<https://www.niu6ai.com>
-- 📦 桌面 app 下载:[Releases](https://github.com/threeq/niuniu-public/releases/latest)
+- 📦 桌面 app 下载:[Releases](https://github.com/threeq/niuniu/releases/latest)
 - 📝 博客:<https://www.niu6ai.com/blog>
 - 📜 更新日志:<https://www.niu6ai.com/changelog>
-- 🐛 反馈 bug:[New Bug Report](https://github.com/threeq/niuniu-public/issues/new?template=bug_report_zh.yml)
-- 💡 功能建议:[New Feature Request](https://github.com/threeq/niuniu-public/issues/new?template=feature_request_zh.yml)
+- 🐛 反馈 bug:[New Bug Report](https://github.com/threeq/niuniu/issues/new?template=bug_report_zh.yml)
+- 💡 功能建议:[New Feature Request](https://github.com/threeq/niuniu/issues/new?template=feature_request_zh.yml)
 
 ## 关于牛牛
 

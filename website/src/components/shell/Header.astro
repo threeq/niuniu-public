@@ -17,7 +17,7 @@ const locale: Locale = getLocaleFromUrl(Astro.url);
       <a href="/blog" class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.blog')}</a>
       <a href={localePath(locale, '/pricing')} class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.pricing')}</a>
       <a href={localePath(locale, '/changelog')} class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.changelog')}</a>
-      <a href="https://github.com/threeq/niuniu-public" rel="noopener noreferrer" class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.github')}</a>
+      <a href="https://github.com/threeq/niuniu" rel="noopener noreferrer" class="hover:text-[rgb(var(--color-primary))]">{t(locale, 'nav.github')}</a>
     </nav>
     <div class="ml-auto flex items-center gap-1">
       <button id="open-search" type="button" class="hidden sm:inline-flex items-center gap-2 h-9 rounded-md border border-[rgb(var(--color-border))] bg-[rgb(var(--color-card))] px-3 text-sm text-[rgb(var(--color-muted))] hover:bg-[rgb(var(--color-bg))]" aria-label={t(locale, 'nav.search')}>

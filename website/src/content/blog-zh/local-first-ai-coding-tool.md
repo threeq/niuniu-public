@@ -42,7 +42,7 @@ keywords: ['本地 AI 编码工具', '代码不上云', '本地优先 AI 编程'
 
 ## 动手搭：个人版 4 步跑通
 
-1. **下载** — 到 [GitHub Releases](https://github.com/threeq/niuniu-public/releases/latest) 下对应平台的包，双击启动，浏览器自动打开本机页面，个人版直接进、不用注册。
+1. **下载** — 到 [GitHub Releases](https://github.com/threeq/niuniu/releases/latest) 下对应平台的包，双击启动，浏览器自动打开本机页面，个人版直接进、不用注册。
 2. **装系统依赖** — 需要 Node.js（v20+ LTS）、Git（2.30+）、以及 Claude Code 或 Codex CLI（二选一）；「设置 → 系统依赖」里每项都显示状态、版本、路径，缺的可一键装。注意 CLI 依赖 Node，**先装 Node 再装 Claude Code / Codex**。
 3. **接模型（本地优先的关键选择）** — 已有 Claude Pro/Max 订阅就 OAuth 登录，凭证存本机；想完全自主可控就在「设置 → 环境变量」选预设、填三方平台 API Key（智谱 / 通义 / DeepSeek / Kimi 等），端点和模型名都预置好，**无需登录**。妙处在于：**算力可以挑供应商，代码始终不动窝**，甚至能接自己内网的兼容端点，做到几乎全链路不出域。
 4. **新建 workspace，发个 hello** — 选仓库 → 牛牛自动基于默认分支拉一个 worktree → 启动 Agent → 输入 `hello`，收到回复即跑通。
@@ -78,5 +78,5 @@ keywords: ['本地 AI 编码工具', '代码不上云', '本地优先 AI 编程'
 
 ---
 
-**免费下载牛牛个人版** → [GitHub Releases](https://github.com/threeq/niuniu-public/releases/latest?utm_source=blog&utm_medium=post&utm_campaign=local-first-ai-coding-tool)
+**免费下载牛牛个人版** → [GitHub Releases](https://github.com/threeq/niuniu/releases/latest?utm_source=blog&utm_medium=post&utm_campaign=local-first-ai-coding-tool)
 **团队私有/自部署**（数据不出内网 / 成员管理 / 审计）→ [www.niu6ai.com/pricing](https://www.niu6ai.com/pricing?utm_source=blog&utm_medium=post&utm_campaign=local-first-ai-coding-tool)

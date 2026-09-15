@@ -5,9 +5,9 @@ group: install
 order: 1
 ---
 
-Personal 是牛牛的单机本地版本：所有数据存在你电脑的 SQLite 文件里，不需要服务器、不需要 PostgreSQL，启动就能用。
+Personal 桌面版是牛牛的单机本地版本，以原生桌面应用交付（Tauri v2，内置本地服务）：所有数据存在你电脑的 SQLite 文件里，不需要服务器、不需要 PostgreSQL，装好就能用。
 
-本文按"装好二进制 → 备齐依赖 → 配好账号"三步走，跟着做完即可在 5 分钟内启动第一个 agent。
+本文按"装好桌面版 → 备齐依赖 → 配好账号"三步走，跟着做完即可在 5 分钟内启动第一个 agent。
 
 ## 1. 系统要求
 
@@ -15,7 +15,7 @@ Personal 是牛牛的单机本地版本：所有数据存在你电脑的 SQLite 
 - **Windows** 10+ x64 —— 需要 [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
   - 普通 Win10 / Win11 家庭版 / 专业版**自带**该组件
   - **LTSC、企业精简版、Windows Server、IoT 等版本默认不预装**，需要手动下载 "Evergreen Standalone Installer"（x64）安装
-  - 如果缺失，niuniu-personal 启动时会弹出**原生提示框**引导你打开下载页 —— 安装后重新启动即可
+  - 如果缺失，牛牛桌面版启动时会弹出**原生提示框**引导你打开下载页 —— 安装后重新启动即可
 - **Linux** glibc 2.31+ x64 —— 需要系统 WebKitGTK 库（缺失时进程会因为动态链接器失败而无法启动）
   - Debian / Ubuntu：`sudo apt install libwebkit2gtk-4.1-0`
   - Fedora / RHEL：`sudo dnf install webkit2gtk4.1`
@@ -24,30 +24,32 @@ Personal 是牛牛的单机本地版本：所有数据存在你电脑的 SQLite 
 
 ## 2. 下载与首次启动
 
-访问 [GitHub Releases](https://github.com/threeq/niuniu-public/releases)，找到最新版本，下载：
+访问 [GitHub Releases](https://github.com/threeq/niuniu/releases)，找到最新版本，下载对应平台的安装包：
 
 | 平台 | 文件名 |
 |---|---|
-| macOS Apple Silicon | `niuniu-personal-<版本>-darwin-arm64` |
-| macOS Intel | `niuniu-personal-<版本>-darwin-amd64` |
-| Windows | `niuniu-personal-<版本>-windows-amd64.exe` |
-| Linux | `niuniu-personal-<版本>-linux-amd64` |
+| macOS Apple Silicon | `niuniu-desktop-v2-<版本>-darwin-arm64.dmg` |
+| macOS Intel | `niuniu-desktop-v2-<版本>-darwin-amd64.dmg` |
+| Windows | `niuniu-desktop-v2-<版本>-windows-amd64.exe` |
+| Linux | `niuniu-desktop-v2-<版本>-linux-amd64.AppImage` |
 
-> `<版本>` 即 release tag，例如 `v0.8.5`。
+> `<版本>` 即 release tag，例如 `v0.8.7`。
 
 ### 国内镜像（百度网盘）
 
-访问 GitHub 较慢或受限时，可从百度网盘下载同一版本的二进制：
+访问 GitHub 较慢或受限时，可从百度网盘下载同一版本的安装包：
 
 - 链接：[https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7](https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7)
 - 提取码：`hmn7`
 
 > 网盘内的文件名、版本号与 GitHub Releases 保持一致；如需最新版本仍以 GitHub Releases 为准。
 
-**macOS / Linux**：下载后给文件加可执行权限（`chmod +x niuniu-personal-*`）再双击启动。macOS 首次运行可能需要在 系统设置 → 隐私与安全性 里允许"开发者未签名"。
+**macOS**：打开 `.dmg`，把牛牛拖入「应用程序」后启动。
+**Windows**：双击 `.exe` 安装，可能需要批准 SmartScreen 提示。
+**Linux**：给 `.AppImage` 加可执行权限（`chmod +x niuniu-desktop-v2-*.AppImage`）后直接运行。macOS 首次运行可能需要在 系统设置 → 隐私与安全性 里允许"开发者未签名"。
 **Windows**：双击 `.exe`，可能需要批准 SmartScreen 提示。
 
-启动后浏览器会自动打开 `http://localhost:3000`。个人版默认无需登录账号，直接进入主界面即可。
+启动后进入牛牛桌面窗口（应用内置本地服务，数据仍全部存放在本机）。个人版默认无需登录账号，直接进入主界面即可。
 
 ## 3. 系统依赖
 

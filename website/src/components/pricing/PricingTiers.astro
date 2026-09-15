@@ -6,7 +6,7 @@ import Button from '@/components/ui/Button.astro';
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const dict = locale === 'zh' ? zh : en;
 const tiers = [
-  { ...dict.pricing.tiers.personal, key: 'personal', href: 'https://github.com/threeq/niuniu-public/releases', highlighted: false },
+  { ...dict.pricing.tiers.personal, key: 'personal', href: 'https://github.com/threeq/niuniu/releases', highlighted: false },
   { ...dict.pricing.tiers.self_hosted, key: 'self_hosted', href: 'mailto:sales@niu6ai.com',                 highlighted: true  },
 ];
 ---

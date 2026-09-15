@@ -51,13 +51,13 @@
       "title": "Personal",
       "subtitle": "Local-first · 3 platforms · Zero deps",
       "cta": "Download",
-      "features": ["macOS / Windows / Linux", "git worktree isolation", "SQLite backend"]
+      "features": ["Native desktop app · macOS / Windows / Linux", "git worktree isolation", "SQLite backend"]
     },
     "self_hosted": {
       "title": "Self-Hosted Team",
       "subtitle": "Docker · On-prem · Unlimited",
       "cta": "View install docs",
-      "features": ["docker compose deploy", "Private data", "Custom audit"]
+      "features": ["One-command docker compose", "Multi-tenant · MFA · PostgreSQL", "Private data · customizable audit"]
     }
   },
   "features": {
@@ -71,7 +71,10 @@
       { "title": "Data intelligence: query + live dashboards", "desc": "Connect SQL / Redis / Mongo / ES / HTTP, run governed read queries, and pin inline charts as continuously refreshing dashboards." },
       { "title": "Knowledge base + project memory", "desc": "Ingest local directories into a searchable knowledge base; a white-box project memory captures patterns, decisions, and gotchas — searchable, mergeable, restorable." },
       { "title": "IM bots: Lark / DingTalk / Telegram", "desc": "Drive work conversationally from group chat — inbound text & images, markdown out, one bot routed across multiple projects." },
-      { "title": "Unattended runs & schedule management", "desc": "Give a workspace a cron schedule to auto-trigger the agent; the autohost watchdog keeps it moving unattended, with run history you can review." }
+      { "title": "Unattended runs & schedule management", "desc": "Give a workspace a cron schedule to auto-trigger the agent; the autohost watchdog keeps it moving unattended, with run history you can review." },
+      { "title": "Native desktop & mobile", "desc": "A Tauri v2 native desktop app with ready-made Windows / macOS / Linux installers, plus a React Native mobile client and the browser UI — one workstation, everywhere." },
+      { "title": "Team edition · collaboration", "desc": "Multi-tenant org isolation, org-owned data sources, PostgreSQL and MFA two-factor auth — team-grade security on a private deployment." },
+      { "title": "Smart updates", "desc": "In-app update checks with a plain-language changelist, GitHub-first with automatic fallback to a China-friendly mirror — always know what each upgrade brings." }
     ]
   },
   "screenshot": {
