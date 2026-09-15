@@ -17,7 +17,7 @@
 #   REMOTE_REF           branch/tag to build              default main
 #   WEBSITE_REMOTE_DIR   base dir under $HOME             default apps/niuniu-website
 #   REMOTE_REPO_DIR      repo checkout dir under $HOME    default $WEBSITE_REMOTE_DIR/repo
-#   REPO_URL             git remote                       default https://github.com/threeq/niuniu.git
+#   REPO_URL             git remote (website repo)        default https://github.com/threeq/niuniu-public.git
 #   RELEASES_API         GitHub releases API (signature)  default .../releases/latest
 #   FORCE                rebuild even if unchanged        default 0
 set -euo pipefail
@@ -25,7 +25,7 @@ set -euo pipefail
 REMOTE_REF="${REMOTE_REF:-main}"
 WEBSITE_REMOTE_DIR="${WEBSITE_REMOTE_DIR:-apps/niuniu-website}"
 REMOTE_REPO_DIR="${REMOTE_REPO_DIR:-$WEBSITE_REMOTE_DIR/repo}"
-REPO_URL="${REPO_URL:-https://github.com/threeq/niuniu.git}"
+REPO_URL="${REPO_URL:-https://github.com/threeq/niuniu-public.git}"
 RELEASES_API="${RELEASES_API:-https://api.github.com/repos/threeq/niuniu/releases/latest}"
 FORCE="${FORCE:-0}"
 
