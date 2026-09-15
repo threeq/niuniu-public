@@ -71,5 +71,5 @@ agent 在隔离环境里自主走 规划 → 执行 → 验证 → 收尾，**�
 
 ---
 
-**免费下载牛牛个人版** → [GitHub Releases](https://github.com/threeq/niuniu-public/releases/latest?utm_source=blog&utm_medium=post&utm_campaign=claude-code-parallel)
+**免费下载牛牛个人版** → [GitHub Releases](https://github.com/threeq/niuniu/releases/latest?utm_source=blog&utm_medium=post&utm_campaign=claude-code-parallel)
 **团队私有版**（私有部署 / 成员管理 / 审计）→ [www.niu6ai.com/pricing](https://www.niu6ai.com/pricing?utm_source=blog&utm_medium=post&utm_campaign=claude-code-parallel)

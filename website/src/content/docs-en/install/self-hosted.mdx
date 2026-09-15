@@ -40,7 +40,7 @@ sudo systemctl enable --now docker
 ### A.2 Download the deployment template
 
 ```bash
-git clone https://github.com/niuniu-dev/niuniu.git
+git clone https://github.com/threeq/niuniu.git
 cd niuniu/relay/deploy
 cp server.yaml.example server.yaml
 ```
@@ -161,24 +161,20 @@ If the database lives on a different host, allow the server's subnet in `pg_hba.
 
 ### B.3 Get the `niuniu-server` binary
 
-**Option 1: download a pre-built release** (recommended)
-
-Grab `niuniu-server-<version>-linux-<arch>` from [GitHub Releases](https://github.com/threeq/niuniu-public/releases), rename to `niuniu-server`, and install it:
-
-```bash
-sudo install -m 0755 niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
-```
-
-**Option 2: build from source**
+**Option 1: build from source** (recommended)
 
 Requires Go 1.25+ and pnpm 9+:
 
 ```bash
-git clone https://github.com/niuniu-dev/niuniu.git
+git clone https://github.com/threeq/niuniu.git
 cd niuniu
 make build-linux
 sudo install -m 0755 bin/niuniu-server-*-linux-amd64 /usr/local/bin/niuniu-server
 ```
+
+**Option 2: desktop installers**
+
+[GitHub Releases](https://github.com/threeq/niuniu/releases) ships macOS / Windows / Linux desktop installers (with the server bundled — fine for single-machine use); bare server binaries are not published with releases, so Linux servers should use the source build above.
 
 ### B.4 Create the system user and directories
 
@@ -237,7 +233,7 @@ sudo chmod 0640 /etc/niuniu/config.yaml
 ```ini
 [Unit]
 Description=Niuniu Team Server
-Documentation=https://github.com/niuniu-dev/niuniu
+Documentation=https://github.com/threeq/niuniu
 After=network-online.target postgresql.service
 Wants=network-online.target
 

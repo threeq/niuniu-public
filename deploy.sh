@@ -34,7 +34,7 @@
 #   WEBSITE_APEX_DOMAIN   default niu6ai.com
 #   REMOTE_REPO_DIR       default $WEBSITE_REMOTE_DIR/repo  (server-side checkout)
 #   REMOTE_REF            default main                      (branch/tag to build)
-#   REPO_URL              default https://github.com/threeq/niuniu-public.git
+#   REPO_URL              default https://github.com/threeq/niuniu.git
 
 set -euo pipefail
 
@@ -46,7 +46,7 @@ WEBSITE_DOMAIN="${WEBSITE_DOMAIN:-www.niu6ai.com}"
 WEBSITE_APEX_DOMAIN="${WEBSITE_APEX_DOMAIN:-niu6ai.com}"
 REMOTE_REPO_DIR="${REMOTE_REPO_DIR:-$WEBSITE_REMOTE_DIR/repo}"
 REMOTE_REF="${REMOTE_REF:-main}"
-REPO_URL="${REPO_URL:-https://github.com/threeq/niuniu-public.git}"
+REPO_URL="${REPO_URL:-https://github.com/threeq/niuniu.git}"
 
 SKIP_BUILD=0
 REMOTE_BUILD=0

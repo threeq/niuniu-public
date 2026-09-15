@@ -18,7 +18,7 @@ export interface Release {
   assets: ReleaseAsset[];
 }
 
-const REPO = 'threeq/niuniu-public';
+const REPO = 'threeq/niuniu';
 const API_URL = `https://api.github.com/repos/${REPO}/releases?per_page=30`;
 
 interface FetchResult {

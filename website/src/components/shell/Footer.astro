@@ -3,7 +3,7 @@ import { getLocaleFromUrl, localePath, t, type Locale } from '@/lib/i18n';
 const locale: Locale = getLocaleFromUrl(Astro.url);
 const groups = [
   { title: t(locale, 'footer.product'), links: [
-    { label: t(locale, 'deploy.personal.title'), href: 'https://github.com/threeq/niuniu-public/releases' },
+    { label: t(locale, 'deploy.personal.title'), href: 'https://github.com/threeq/niuniu/releases' },
     { label: t(locale, 'deploy.self_hosted.title'), href: localePath(locale, '/docs/install/self-hosted') },
   ]},
   { title: t(locale, 'footer.docs'), links: [
@@ -13,8 +13,8 @@ const groups = [
     { label: t(locale, 'groups.faq'), href: localePath(locale, '/docs/faq') },
   ]},
   { title: t(locale, 'footer.resources'), links: [
-    { label: t(locale, 'nav.github'), href: 'https://github.com/threeq/niuniu-public' },
-    { label: 'Releases', href: 'https://github.com/threeq/niuniu-public/releases' },
+    { label: t(locale, 'nav.github'), href: 'https://github.com/threeq/niuniu' },
+    { label: 'Releases', href: 'https://github.com/threeq/niuniu/releases' },
     { label: t(locale, 'nav.changelog'), href: localePath(locale, '/changelog') },
     { label: t(locale, 'groups.privacy'), href: localePath(locale, '/docs/telemetry-privacy') },
   ]},

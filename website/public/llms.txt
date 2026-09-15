@@ -26,4 +26,4 @@
 - [定价 Pricing](https://www.niu6ai.com/pricing): 桌面版免费；团队私有版年度许可。
 - [更新日志 Changelog](https://www.niu6ai.com/changelog): 桌面 app 各版本发布说明。
 - [English docs](https://www.niu6ai.com/en/docs/intro)
-- [GitHub](https://github.com/threeq/niuniu-public)
+- [GitHub](https://github.com/threeq/niuniu)

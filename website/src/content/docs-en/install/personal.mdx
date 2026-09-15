@@ -5,9 +5,9 @@ group: install
 order: 1
 ---
 
-Personal is Niuniu's single-machine local edition: all data lives in a SQLite file on your computer — no server, no PostgreSQL required. Download, launch, and you're ready to go.
+Personal is Niuniu's single-machine local edition, shipped as a native desktop app (Tauri v2 with a bundled local server): all data lives in a SQLite file on your computer — no server, no PostgreSQL required. Install, launch, and you're ready to go.
 
-This guide walks you through three stages: **install the binary → set up dependencies → configure your account**. Follow it end-to-end and you'll have an agent running in under five minutes.
+This guide walks you through three stages: **install the desktop app → set up dependencies → configure your account**. Follow it end-to-end and you'll have an agent running in under five minutes.
 
 ## 1. System requirements
 
@@ -15,7 +15,7 @@ This guide walks you through three stages: **install the binary → set up depen
 - **Windows** 10+ x64 — requires the [Microsoft Edge WebView2 Runtime](https://developer.microsoft.com/microsoft-edge/webview2/)
   - Stock Win10 / Win11 Home / Pro **bundle** WebView2 Runtime
   - **LTSC, Enterprise stripped-down, Windows Server, IoT, and similar SKUs ship without it** — install the "Evergreen Standalone Installer" (x64) manually
-  - If missing, niuniu-personal will show a **native dialog** with a button to open the download page — install it, then relaunch
+  - If missing, the desktop app will show a **native dialog** with a button to open the download page — install it, then relaunch
 - **Linux** glibc 2.31+ x64 — requires the system WebKitGTK library (without it the dynamic linker fails before our process even starts)
   - Debian / Ubuntu: `sudo apt install libwebkit2gtk-4.1-0`
   - Fedora / RHEL: `sudo dnf install webkit2gtk4.1`
@@ -24,30 +24,31 @@ This guide walks you through three stages: **install the binary → set up depen
 
 ## 2. Download and first launch
 
-Go to [GitHub Releases](https://github.com/threeq/niuniu-public/releases), find the latest release, and download the binary for your platform:
+Go to [GitHub Releases](https://github.com/threeq/niuniu/releases), find the latest release, and download the installer for your platform:
 
 | Platform | File |
 |---|---|
-| macOS Apple Silicon | `niuniu-personal-<version>-darwin-arm64` |
-| macOS Intel | `niuniu-personal-<version>-darwin-amd64` |
-| Windows | `niuniu-personal-<version>-windows-amd64.exe` |
-| Linux | `niuniu-personal-<version>-linux-amd64` |
+| macOS Apple Silicon | `niuniu-desktop-v2-<version>-darwin-arm64.dmg` |
+| macOS Intel | `niuniu-desktop-v2-<version>-darwin-amd64.dmg` |
+| Windows | `niuniu-desktop-v2-<version>-windows-amd64.exe` |
+| Linux | `niuniu-desktop-v2-<version>-linux-amd64.AppImage` |
 
-> `<version>` is the release tag, e.g. `v0.8.5`.
+> `<version>` is the release tag, e.g. `v0.8.7`.
 
 ### Mainland China mirror (Baidu Netdisk)
 
-If GitHub is slow or unreachable, the same binaries are mirrored on Baidu Netdisk:
+If GitHub is slow or unreachable, the same installers are mirrored on Baidu Netdisk:
 
 - Link: [https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7](https://pan.baidu.com/s/1pKssFu-u8_hwqfVR0Xc19w?pwd=hmn7)
 - Extraction code: `hmn7`
 
 > Filenames and versions on the mirror match GitHub Releases; for the very latest release, GitHub Releases remains authoritative.
 
-**macOS / Linux**: mark the downloaded file executable (`chmod +x niuniu-personal-*`) and double-click. On macOS you may need to allow the unsigned binary in System Settings → Privacy & Security on first run.
-**Windows**: double-click the `.exe` — you may need to approve the SmartScreen prompt.
+**macOS**: open the `.dmg` and drag Niuniu into Applications, then launch. You may need to allow the unsigned app in System Settings → Privacy & Security on first run.
+**Windows**: double-click the `.exe` to install — you may need to approve the SmartScreen prompt.
+**Linux**: mark the `.AppImage` executable (`chmod +x niuniu-desktop-v2-*.AppImage`) and run it directly.
 
-After launch, your browser will automatically open `http://localhost:3000`. The Personal edition runs without any login — you'll land directly on the main console.
+After launch, the Niuniu desktop window opens (a local server is bundled; your data stays on your machine). The Personal edition runs without any login — you'll land directly on the main console.
 
 ## 3. System dependencies
 

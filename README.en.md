@@ -6,10 +6,10 @@
 
 > [中文](./README.md) | English
 
-[![Stars](https://img.shields.io/github/stars/threeq/niuniu-public?style=flat&logo=github&color=f5a623)](https://github.com/threeq/niuniu-public/stargazers)
-[![Latest release](https://img.shields.io/github/v/release/threeq/niuniu-public?display_name=tag&logo=github)](https://github.com/threeq/niuniu-public/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/threeq/niuniu-public/total?logo=github&label=downloads)](https://github.com/threeq/niuniu-public/releases)
-[![License](https://img.shields.io/github/license/threeq/niuniu-public)](./LICENSE)
+[![Stars](https://img.shields.io/github/stars/threeq/niuniu?style=flat&logo=github&color=f5a623)](https://github.com/threeq/niuniu/stargazers)
+[![Latest release](https://img.shields.io/github/v/release/threeq/niuniu?display_name=tag&logo=github)](https://github.com/threeq/niuniu/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/threeq/niuniu/total?logo=github&label=downloads)](https://github.com/threeq/niuniu/releases)
+[![License](https://img.shields.io/github/license/threeq/niuniu)](./LICENSE)
 [![Platform](https://img.shields.io/badge/platform-macOS%20%7C%20Windows%20%7C%20Linux-blue)](https://www.niu6ai.com/en)
 [![Website](https://img.shields.io/badge/site-niu6ai.com-2e7d32?logo=astro&logoColor=white)](https://www.niu6ai.com/en)
 
@@ -74,11 +74,11 @@ One platform across software · office · data · content:
 ## Links
 
 - 🌐 Website & docs: <https://www.niu6ai.com/en>
-- 📦 Desktop app downloads: [Releases](https://github.com/threeq/niuniu-public/releases/latest)
+- 📦 Desktop app downloads: [Releases](https://github.com/threeq/niuniu/releases/latest)
 - 📝 Blog: <https://www.niu6ai.com/blog>
 - 📜 Changelog: <https://www.niu6ai.com/en/changelog>
-- 🐛 File a bug: [New Bug Report](https://github.com/threeq/niuniu-public/issues/new?template=bug_report_en.yml)
-- 💡 Feature request: [New Feature Request](https://github.com/threeq/niuniu-public/issues/new?template=feature_request_en.yml)
+- 🐛 File a bug: [New Bug Report](https://github.com/threeq/niuniu/issues/new?template=bug_report_en.yml)
+- 💡 Feature request: [New Feature Request](https://github.com/threeq/niuniu/issues/new?template=feature_request_en.yml)
 
 ## About Niuniu
 

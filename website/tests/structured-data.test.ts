@@ -22,7 +22,7 @@ describe('organizationSchema', () => {
   it('exposes the contact email and GitHub as sameAs', () => {
     const json = JSON.stringify(org);
     expect(json).toContain('three3q@qq.com');
-    expect(json).toContain('https://github.com/threeq/niuniu-public');
+    expect(json).toContain('https://github.com/threeq/niuniu');
   });
 });
 

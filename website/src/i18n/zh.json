@@ -51,13 +51,13 @@
       "title": "桌面版",
       "subtitle": "单机本地 · 三平台 · 零依赖",
       "cta": "下载",
-      "features": ["macOS / Windows / Linux", "git worktree 隔离", "本地 SQLite 后端"]
+      "features": ["原生桌面 App · macOS / Windows / Linux", "git worktree 隔离", "本地 SQLite 后端"]
     },
     "self_hosted": {
       "title": "团队私有版",
       "subtitle": "Docker · 私有化 · 不限用户",
       "cta": "查看安装文档",
-      "features": ["docker compose 一键部署", "私有数据", "可定制审计"]
+      "features": ["docker compose 一键部署", "多租户 · MFA · PostgreSQL", "私有数据 · 可定制审计"]
     }
   },
   "features": {
@@ -71,7 +71,10 @@
       { "title": "数据智能：接库查询 + 实时看板", "desc": "连接 SQL / Redis / Mongo / ES / HTTP，受治理只读查询，图表内联并可固定为持续刷新的看板。" },
       { "title": "知识库 + 项目记忆", "desc": "摄取本地目录建知识库供 agent 检索；白盒项目记忆沉淀模式、决策与踩坑，可搜索、合并、恢复。" },
       { "title": "IM 机器人：飞书 / 钉钉 / Telegram", "desc": "从群聊双向对话式驱动工作，图文入站、markdown 出站，一个 bot 多项目分流。" },
-      { "title": "无人值守 · 定时执行管理", "desc": "为 workspace 配 cron 定时任务，到点自动触发 agent；自动托管看门狗无人值守持续推进，执行历史与运行记录可回看。" }
+      { "title": "无人值守 · 定时执行管理", "desc": "为 workspace 配 cron 定时任务，到点自动触发 agent；自动托管看门狗无人值守持续推进，执行历史与运行记录可回看。" },
+      { "title": "原生桌面 + 移动端", "desc": "Tauri v2 原生桌面应用，Windows / macOS / Linux 安装包开箱即用，另有 React Native 移动端与浏览器 UI——同一工作站随处可用。" },
+      { "title": "团队版 · 多人协作", "desc": "多租户组织隔离、数据源按组织共享归属、PostgreSQL 与 MFA 两步验证，私有化部署下的团队级安全。" },
+      { "title": "智能版本更新", "desc": "应用内检测新版本并展示优化点清单，GitHub 直连、国内自动降级镜像，每次升级内容一目了然。" }
     ]
   },
   "screenshot": {

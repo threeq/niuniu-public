@@ -15,7 +15,7 @@ export type JsonLd = Record<string, unknown>;
 const ORG_NAME = 'Niuniu';
 const ORG_NAME_ZH = '牛牛';
 const CONTACT_EMAIL = 'three3q@qq.com';
-const GITHUB_URL = 'https://github.com/threeq/niuniu-public';
+const GITHUB_URL = 'https://github.com/threeq/niuniu';
 
 const orgId = (siteUrl: string) => `${siteUrl}/#organization`;
 const websiteId = (siteUrl: string) => `${siteUrl}/#website`;
