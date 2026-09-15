@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import type { Locale } from './i18n';
+import { RELEASE_NOTES } from './release-notes';
 
 export interface ReleaseAsset {
   name: string;
@@ -101,4 +102,15 @@ export function renderBody(body: string, locale: Locale): string {
   }
   const section = body.slice(startIdx + start.length, endIdx).trim();
   return marked.parse(section, { breaks: true, gfm: true }) as string;
+}
+
+// Curated per-tag notes take precedence over the raw GitHub body — early
+// releases of threeq/niuniu shipped bare auto-generated bodies (a compare
+// link, no real notes). See release-notes.ts.
+export function renderReleaseBody(release: Release, locale: Locale): string {
+  const note = RELEASE_NOTES[release.tag_name];
+  if (note) {
+    return marked.parse(note[locale], { breaks: true, gfm: true }) as string;
+  }
+  return renderBody(release.body, locale);
 }
